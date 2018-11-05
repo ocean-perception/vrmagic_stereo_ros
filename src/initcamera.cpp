@@ -95,6 +95,8 @@ void initCamera(VRmUsbCamDevice device, VRmDWORD& num_sensorports, VRmBOOL* acti
         VRMEXECANDCHECK(VRmUsbCamGetTargetFormatListSizeEx2( device, port, &number_of_target_formats ) );
         for ( jj = 0; jj < number_of_target_formats; ++jj ) {
             VRMEXECANDCHECK(VRmUsbCamGetTargetFormatListEntryEx2(device, port, jj, &target_format[ii]));
+			const char *target_color_format_str;
+			VRMEXECANDCHECK(VRmUsbCamGetStringFromColorFormat(target_format[ii].m_color_format, &target_color_format_str));
             std::cout << "Available formats: "
                 << target_format[ii].m_width << "x" << target_format[ii].m_height
                 << " (" << target_color_format_str << ")" << std::endl;
