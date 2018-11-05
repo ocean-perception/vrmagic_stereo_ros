@@ -101,7 +101,7 @@ void getNextTuple(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_po
 void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port_list, VRmImageFormat* target_format)
 {
 	// SDL keystate array
-	Uint8 *keystate;
+	//unsigned char *keystate;
 
 	// initialize viewer
 	std::stringstream buf;
@@ -153,8 +153,8 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 		// lock the SDL off-screen buffer to output the images below each other to the screen.
 		// The screen_buffer_pitch variable will receive the pitch (byte size of
 		// one line) of the buffer.
-		VRmDWORD screen_buffer_pitch;
-		VRmBYTE* p_screen_buffer=SDLLockBuffer(screen_buffer_pitch);
+		VRmDWORD screen_buffer_pitch = 1280;
+		VRmBYTE* p_screen_buffer(new VRmBYTE(8*3*1280*960));//=SDLLockBuffer(screen_buffer_pitch);
 
 		// now, we wrap a VRmImage around the locked screen buffer to receive the converted image
 		for(VRmDWORD ii = 0; ii<num_ports;ii++)
@@ -162,8 +162,8 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 			if(active_port_list[ii])
 			{
 				VRmImage* p_target_img=0;
-				VRMEXECANDCHECK(VRmUsbCamSetImage(&p_target_img, target_format[ii], p_screen_buffer, screen_buffer_pitch));
-				VRMEXECANDCHECK(VRmUsbCamConvertImage(p_source_img[ii], p_target_img));
+				//VRMEXECANDCHECK(VRmUsbCamSetImage(&p_target_img, target_format[ii], p_screen_buffer, screen_buffer_pitch));
+				//VRMEXECANDCHECK(VRmUsbCamConvertImage(p_source_img[ii], p_target_img));
 				//advance screen buffer pointer to wrap next target image
 				p_screen_buffer += screen_buffer_pitch * target_format[ii].m_height;
 
@@ -172,10 +172,10 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 			}
 		}
 		// give the off-screen buffer back to SDL
-		SDLUnlockBuffer();
+		//SDLUnlockBuffer();
 
 		// and update the screen
-		SDLUpdate();
+		//SDLUpdate();
 
 		for(VRmDWORD ii=0;ii<num_ports;ii++)
 		{
@@ -185,15 +185,16 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 			}
 		}
 
-		SDL_PumpEvents();
+		//SDL_PumpEvents();
 
 		// get key state of ESC
-		keystate = SDL_GetKeyState(NULL);
-	} while (!keystate[SDLK_ESCAPE] && !kbhit());
+		//keystate = SDL_GetKeyState(NULL);
+	//} while (!keystate[SDLK_ESCAPE] && !kbhit());
+	} while (true);
 
 	// stop grabber
 	VRMEXECANDCHECK(VRmUsbCamStop(device));
 
 	// close SDL output window
-	SDLWindowClose();
+	//SDLWindowClose();
 }

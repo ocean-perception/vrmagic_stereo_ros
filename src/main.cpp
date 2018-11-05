@@ -79,15 +79,7 @@ int main(int argc, char** argv)
 	// from now on, the "device" handle can be used to access the camera board.
 	// use VRmUsbCamCloseDevice to end the usage
 
-#ifdef WIN32
-	// open settings window of device (optional, may fail if GUI component is not installed)
-	VRmDevicePropertyPage* lp_page= 0;
-	if (VRmUsbCamCreateDevicePropertyPage(device, 0, 0, &lp_page))
-	{
-		MoveWindow(lp_page->m_handle, 80, 80, lp_page->m_size_hint.m_width, lp_page->m_size_hint.m_height, false);
-		ShowWindow(lp_page->m_handle, SW_SHOW);
-	}
-#endif
+
 	// init camera, change some settings...
 	// we get a target_format in return, which is necessary to initialize our
 	// viewer window
@@ -104,10 +96,6 @@ int main(int argc, char** argv)
 	// and read pictures...
 	readCamera(device, num_ports, active_port_list, target_formats);
 
-#ifdef WIN32
-	// finally, close the settings window
-	VRMEXECANDCHECK(VRmUsbCamDestroyDevicePropertyPage(&lp_page));
-#endif
 	// ...and the device
 	VRMEXECANDCHECK(VRmUsbCamCloseDevice(device));
 
