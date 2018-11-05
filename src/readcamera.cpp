@@ -10,11 +10,11 @@
 #include <sstream>
 #include <iomanip>
 
-#ifdef __linux__
-#include <SDL/SDL.h>
-#else
-#include <SDL.h>
-#endif
+// #ifdef __linux__
+// #include <SDL/SDL.h>
+// #else
+// #include <SDL.h>
+// #endif
 
 // get a tuple of source images with equal frame counter
 void getNextTuple(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port_list, VRmImage** p_source_img)
@@ -124,12 +124,12 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 
 		}
 	}
-	if (!SDLWindowInit(buf.str().c_str(), screen_format))
-	{
-		std::cerr << "Could not initialize SDL output window." << std::endl;
-		VRmUsbCamCloseDevice(device);
-		exit(-1);
-	}
+	// if (!SDLWindowInit(buf.str().c_str(), screen_format))
+	// {
+	// 	std::cerr << "Could not initialize SDL output window." << std::endl;
+	// 	VRmUsbCamCloseDevice(device);
+	// 	exit(-1);
+	// }
 	VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_key));
 
 	// ------------------------------------------------------------------------

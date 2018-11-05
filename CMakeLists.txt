@@ -14,7 +14,7 @@ include_directories(
 )
 
 
-add_executable(vrmagic_driftcam src/main.cpp src/initcamera.cpp src/readcamera.cpp src/sdlwindow.cpp)
+add_executable(vrmagic_driftcam src/main.cpp src/initcamera.cpp src/readcamera.cpp)
 
 
 target_link_libraries(vrmagic_driftcam ${VRMAGICUSB2_LIBRARIES}
