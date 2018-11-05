@@ -109,9 +109,9 @@ void readCamera(VRmUsbCamDevice device, VRmDWORD num_ports, VRmBOOL* active_port
 	VRMEXECANDCHECK(VRmUsbCamGetDeviceKey(device, &p_key));
 	VRmSTRING l_serial;
 	VRMEXECANDCHECK(VRmUsbCamGetSerialString(p_key, &l_serial));
-	buf << "VRmagic VRmUsbCam C API v2 Demo - Device: "
+	std::cout << "VRmagic VRmUsbCam C API v2 Demo - Device: "
 		<< p_key->mp_product_str
-		<< " #" << l_serial;
+		<< " #" << l_serial << std::endl;
 	VRmImageFormat screen_format=target_format[0];
 	for(VRmDWORD ii=1;ii<num_ports;ii++)
 	{

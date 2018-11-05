@@ -26,80 +26,80 @@
 
 void LogExit()
 {
-	std::cerr << "VRmUsbCam Error: " <<  VRmUsbCamGetLastError() << "\nApplication exit" << std::endl;
-	exit(-1);
+    std::cerr << "VRmUsbCam Error: " <<  VRmUsbCamGetLastError() << "\nApplication exit" << std::endl;
+    exit(-1);
 }
 
 int main(int argc, char** argv)
 {
-	// at first, be sure to call VRmUsbCamCleanup() at exit, even in case
-	// of an error
-	atexit(VRmUsbCamCleanup);
+    // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
+    // of an error
+    atexit(VRmUsbCamCleanup);
 
-	// parse command line
-	bool g_use_sysmem= false;	   // by default, use video memory
-	if (argc>1) g_use_sysmem= strcmp(argv[1], "sysmem")?false:true;
+    // parse command line
+    bool g_use_sysmem= false;      // by default, use video memory
+    if (argc>1) g_use_sysmem= strcmp(argv[1], "sysmem")?false:true;
 
-	// read libversion (for informational purposes only)
-	VRmDWORD libversion;
-	VRMEXECANDCHECK(VRmUsbCamGetVersion(&libversion));
+    // read libversion (for informational purposes only)
+    VRmDWORD libversion;
+    VRMEXECANDCHECK(VRmUsbCamGetVersion(&libversion));
 
-	std::cout << "========================================================" << std::endl
-		<< "===         VRmagic VRmUsbCam2 C API Demo            ===" << std::endl
-		<< "========================================================" << std::endl
-		<< "(v." << libversion << ")" << std::endl << std::endl;
+    std::cout << "========================================================" << std::endl
+        << "===         VRmagic VRmUsbCam2 C API Demo            ===" << std::endl
+        << "========================================================" << std::endl
+        << "(v." << libversion << ")" << std::endl << std::endl;
 
-	// uncomment this to enable logging features of VRmUsbCam (for customer support)
-	//VRmUsbCamEnableLogging();
+    // uncomment this to enable logging features of VRmUsbCam (for customer support)
+    //VRmUsbCamEnableLogging();
 
-	// check for connected devices
-	VRmDWORD size=0;
-	VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListSize(&size));
+    // check for connected devices
+    VRmDWORD size=0;
+    VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListSize(&size));
 
-	// open first usable device
-	VRmUsbCamDevice device=0;
-	VRmDeviceKey* p_device_key=0;
-	for(VRmDWORD i=0; i<size && !device; ++i)
-	{
-		VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListEntry(i, &p_device_key));
-		if(!p_device_key->m_busy) {
-			VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device));
-		}
-		VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
-	}
+    // open first usable device
+    VRmUsbCamDevice device = 0;
+    VRmDeviceKey* p_device_key = 0;
+    for(VRmDWORD i=0; i<size && !device; ++i) {
+        VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListEntry(i, &p_device_key));
+        if(!p_device_key->m_busy) {
+            std::cout << "Opening device: " << p_device_key->m_serial << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device));
+        }
+        VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
+    }
 
-	// display error when no camera has been found
-	if(!device)
-	{
-		std::cerr << "No suitable VRmagic device found!" << std::endl;
-		exit(-1);
-	}
+    // display error when no camera has been found
+    if(!device)
+    {
+        std::cerr << "No suitable VRmagic device found!" << std::endl;
+        exit(-1);
+    }
 
-	// NOTE:
-	// from now on, the "device" handle can be used to access the camera board.
-	// use VRmUsbCamCloseDevice to end the usage
+    // NOTE:
+    // from now on, the "device" handle can be used to access the camera board.
+    // use VRmUsbCamCloseDevice to end the usage
 
 
-	// init camera, change some settings...
-	// we get a target_format in return, which is necessary to initialize our
-	// viewer window
-	VRmImageFormat target_formats[4];
-	VRmDWORD num_ports;
-	VRmBOOL active_port_list[4]={0, 0, 0, 0};
-	initCamera(device, num_ports, active_port_list, target_formats);
-	if(num_ports<1)
-	{
-		std::cout << "no sensor(s) found, exiting!" << std::endl;
-		exit(-1);
-	}
+    // init camera, change some settings...
+    // we get a target_format in return, which is necessary to initialize our
+    // viewer window
+    VRmImageFormat target_formats[4];
+    VRmDWORD num_ports;
+    VRmBOOL active_port_list[4]={0, 0, 0, 0};
+    initCamera(device, num_ports, active_port_list, target_formats);
+    if(num_ports<1)
+    {
+        std::cout << "no sensor(s) found, exiting!" << std::endl;
+        exit(-1);
+    }
 
-	// and read pictures...
-	readCamera(device, num_ports, active_port_list, target_formats);
+    // and read pictures...
+    readCamera(device, num_ports, active_port_list, target_formats);
 
-	// ...and the device
-	VRMEXECANDCHECK(VRmUsbCamCloseDevice(device));
+    // ...and the device
+    VRMEXECANDCHECK(VRmUsbCamCloseDevice(device));
 
-	std::cout << "exit." << std::endl;
+    std::cout << "exit." << std::endl;
 
-	return 0;
+    return 0;
 }
