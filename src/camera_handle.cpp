@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <chrono>
+#include <cstring>
 
 #include "vrmagic_driftcam/camera_handle.h"
 

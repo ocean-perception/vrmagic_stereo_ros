@@ -1,7 +1,6 @@
 // Copyright (c) 2018 University of Southampton
 
 #include <iostream>
-#include <chrono>
 #include <thread>
 
 #include "vrmagic_driftcam/camera_handle.h"
@@ -22,9 +21,6 @@ int main(int argc, char** argv) {
 
     Driftcam::CameraHandle cam1("QERQR5");
     Driftcam::CameraHandle cam2("FEQH45");
-
-    std::thread t[2];
-
 
     int i = 0;
     while (i < 10) {
