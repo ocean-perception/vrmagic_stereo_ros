@@ -29,12 +29,16 @@ int main(int argc, char** argv) {
     serial_port.setParity(Driftcam::EParity::PARITY_NONE);
     serial_port.setFlowControl(Driftcam::EFlowControl::FLOW_CONTROL_NONE);
 
+    int sp_timeout_ms = 1000;
 
     Driftcam::CameraHandle cam1("QERQR5");
     Driftcam::CameraHandle cam2("FEQH45");
 
     int i = 0;
     while (i < 10) {
+        std::string line = serial_port.readLine(sp_timeout_ms) ;
+        std::cout << "Received: " << line << "\n";
+
         cam1.trigger();
         cam2.trigger();
         cam1.grab();
