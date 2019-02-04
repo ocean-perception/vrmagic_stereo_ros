@@ -3,7 +3,9 @@
 #include <iostream>
 #include <thread>
 
-#include "vrmagic_driftcam/camera_handle.h"
+#include <vrmagic_driftcam/camera_handle.h>
+#include <vrmagic_driftcam/serial_port.h>
+
 
 int main(int argc, char** argv) {
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
@@ -18,6 +20,15 @@ int main(int argc, char** argv) {
     std::cout << "===                 VRmagic Driftcam                 ===\n";
     std::cout << "========================================================\n";
     std::cout << "VRmUsbCam2 C API (v." << libversion << ")\n\n";
+
+    Driftcam::SerialPort serial_port;
+    serial_port.open("COM4");
+    serial_port.setBaudRate(Driftcam::EBaudRate::BAUD_9600);
+    serial_port.setCharSize(Driftcam::ECharacterSize::CHAR_SIZE_8);
+    serial_port.setNumOfStopBits(Driftcam::EStopBits::STOP_BITS_1);
+    serial_port.setParity(Driftcam::EParity::PARITY_NONE);
+    serial_port.setFlowControl(Driftcam::EFlowControl::FLOW_CONTROL_NONE);
+
 
     Driftcam::CameraHandle cam1("QERQR5");
     Driftcam::CameraHandle cam2("FEQH45");
