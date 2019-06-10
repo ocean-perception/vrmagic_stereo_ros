@@ -17,14 +17,59 @@ void LogExit() {
 
 namespace Driftcam {
 
+CameraHandle::CameraHandle()
+        : device_(0), port_(1) {
+    // set empty device
+    device_ = 0;
+    /// NOTE: single-sensor devices do only have port #1
+    port_ = 1;
+    opened_ = false;
+}
+
 CameraHandle::CameraHandle(const std::string& camera_serial)
         : device_(0), port_(1) {
     // set empty device
     device_ = 0;
     /// NOTE: single-sensor devices do only have port #1
     port_ = 1;
+    opened_ = false;
 
     start(camera_serial);
+}
+
+void CameraHandle::open(const VRmDeviceKey* p_device_key,
+                        const VRmSTRING& p_device_str) {
+    if (p_device_key->m_busy) return;
+
+    std::cout << "Opening device: "
+              << p_device_key->mp_product_str
+              << " #" << p_device_str << std::endl;
+    identifier_ = std::string(p_device_str);
+    VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
+
+    opened_ = true;
+
+    //now get the first sensor port
+    VRmDWORD port = 0;
+    VRMEXECANDCHECK(VRmUsbCamGetSensorPortListEntry(device_, 0, &port));
+
+    //VRmPropId mode = VRM_PROPID_GRAB_MODE_FREERUNNING;
+    //VRMEXECANDCHECK(VRmUsbCamSetPropertyValueE(device_, VRM_PROPID_GRAB_MODE_E, &mode));
+
+    VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
+    //printColorFormats();
+
+    clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count() / 1000.0;
+    VRMEXECANDCHECK(VRmUsbCamRestartTimer());
+
+    double timestamp = getCurrentTime();
+    // std::cout << "Timestamp: " << timestamp << std::endl;
+    // std::cout << std::setprecision(16)
+    //           << "Epoch    : " << clock_epoch_ << std::endl;
+
+    // start grabber at first
+    VRMEXECANDCHECK(VRmUsbCamStart(device_));
 }
 
 void CameraHandle::start(const std::string& camera_serial) {
@@ -45,11 +90,7 @@ void CameraHandle::start(const std::string& camera_serial) {
         //           << " \n\t Serial: " << p_device_str << std::endl;
         if (std::strcmp(p_device_str, camera_serial.c_str()) == 0) {
             if (!p_device_key->m_busy) {
-                std::cout << "Opening device: "
-                          << p_device_key->mp_product_str
-                          << " #" << p_device_str << std::endl;
-                identifier_ = std::string(p_device_str);
-                VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
+                open(p_device_key, p_device_str);
             }
         }
         VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
@@ -60,28 +101,6 @@ void CameraHandle::start(const std::string& camera_serial) {
         std::cerr << "No suitable VRmagic device found!" << std::endl;
         exit(-1);
     }
-
-
-
-    // printColorFormats();
-
-    VRmPropId mode = VRM_PROPID_GRAB_MODE_TRIGGERED_SOFT;
-    VRMEXECANDCHECK(VRmUsbCamSetPropertyValueE(device_,
-                                               VRM_PROPID_GRAB_MODE_E,
-                                               &mode));
-    VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
-
-    clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count() / 1000.0;
-    VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-
-    double timestamp = getCurrentTime();
-    // std::cout << "Timestamp: " << timestamp << std::endl;
-    // std::cout << std::setprecision(16)
-    //           << "Epoch    : " << clock_epoch_ << std::endl;
-
-    // start grabber at first
-    VRMEXECANDCHECK(VRmUsbCamStart(device_));
 }
 
 double CameraHandle::getCurrentTime() {
@@ -107,6 +126,8 @@ void CameraHandle::trigger() {
 
 
 void CameraHandle::grab() {
+    if (!opened_) return;
+
     int timeout_ms = 1000;
     bool images_available = false;
 
@@ -172,6 +193,7 @@ void CameraHandle::grab() {
         std::string error_string = std::string(VRmUsbCamGetLastError());
         std::cerr << "VRmUsbCamLockNextImageEx2() failed with "
                   << error_string << std::endl;
+        opened_ = false;
     }
 }
 
@@ -372,13 +394,17 @@ float CameraHandle::getFramerate() {
 
 bool CameraHandle::setTriggerMode(const TriggerMode& triggermode) {
     VRmPropId tmp;
-    if (triggermode == TRIG_INTERNAL) {
-        tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_INTERNAL;
+    if (triggermode == TRIG_FREERUNNING) {
+        std::cout << "Setting triggermode: TRIG_FREERUNNING" << std::endl;
+        tmp = VRM_PROPID_GRAB_MODE_FREERUNNING;
     } else if (triggermode == TRIG_EXTERNAL) {
+        std::cout << "Setting triggermode: TRIG_EXTERNAL" << std::endl;
         tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_EXT;
     } else if (triggermode == TRIG_SOFTWARE) {
+        std::cout << "Setting triggermode: TRIG_SOFTWARE" << std::endl;
         tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_SOFT;
-    } else if (triggermode == FREERUNNING) {
+    } else if (triggermode == TRIG_FREERUNNING_SEQUENTIAL) {
+        std::cout << "Setting triggermode: TRIG_FREERUNNING_SEQUENTIAL" << std::endl;
         tmp = VRM_PROPID_GRAB_MODE_FREERUNNING_SEQUENTIAL;
     } else {
         std::cout << "Unknown triggermode" << std::endl;
@@ -396,6 +422,41 @@ VRmPropId CameraHandle::getTriggerMode() {
     VRMEXECANDCHECK(VRmUsbCamGetPropertyValueE(
         device_, VRM_PROPID_GRAB_MODE_E, &ret));
     return ret;
+}
+
+void CameraHandle::listAllProperties() {
+    // list all supported properties
+    std::cout << "\nProperties for camera:\n" << std::endl;
+    VRmDWORD size = 0;
+    VRmBOOL supported;
+    VRMEXECANDCHECK(VRmUsbCamGetPropertyListSize(device_, &size));
+
+    for (VRmDWORD i = 0; i < size; ++i) {
+        VRmPropId id;
+        VRMEXECANDCHECK(VRmUsbCamGetPropertyListEntry(device_, i, &id));
+        VRmPropInfo info;
+        // read property meta information
+        VRMEXECANDCHECK(VRmUsbCamGetPropertyInfo(device_, id, &info));
+        std::cout << "[" << i << "]: 0x" << std::hex << info.m_id << std::dec << ", " << info.m_id_string
+            << " \"" << info.m_description << "\"" << (info.m_writeable?"":" (read-only)") << std::endl;
+
+        // for enum properties, also print out all possible values
+        if (info.m_type == VRM_PROP_TYPE_ENUM) {
+            std::cout << "  =>  Possible values:" << std::endl;
+            VRmPropAttribsE attribs;
+            VRMEXECANDCHECK(VRmUsbCamGetPropertyAttribsE(device_, id, &attribs));
+            for (VRmPropId cid=attribs.m_min; cid<=attribs.m_max; cid=VRmPropId(cid+1))
+            {
+                VRMEXECANDCHECK(VRmUsbCamGetPropertySupported(device_, cid, &supported));
+                if (!supported)
+                    continue;
+                VRmPropInfo cinfo;
+                VRMEXECANDCHECK(VRmUsbCamGetPropertyInfo(device_, cid, &cinfo));
+                std::cout << "      0x" << std::hex << cinfo.m_id << std::dec << ", " << cinfo.m_id_string << " \""
+                    << cinfo.m_description << "\"" << std::endl;
+            }
+        }
+    }
 }
 
 }  // namespace Driftcam

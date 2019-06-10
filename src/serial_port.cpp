@@ -2,9 +2,7 @@
 
 namespace Driftcam {
 
-void SerialPort::open(const std::string& serialPortPath) throw(AlreadyOpen, OpenFailed,
-                                                   UnsupportedBaudRate,
-                                                   std::invalid_argument) {
+void SerialPort::open(const std::string& serialPortPath) noexcept {
   if (serialPort_.is_open()) throw AlreadyOpen();
 
   boost::system::error_code ec;
@@ -13,7 +11,7 @@ void SerialPort::open(const std::string& serialPortPath) throw(AlreadyOpen, Open
   if (ec) throw OpenFailed(ec.message());
 }
 
-EBaudRate SerialPort::getBaudRate() const throw(NotOpen, std::runtime_error) {
+EBaudRate SerialPort::getBaudRate() const noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -87,7 +85,7 @@ EBaudRate SerialPort::getBaudRate() const throw(NotOpen, std::runtime_error) {
   }
 }
 
-ECharacterSize SerialPort::getCharSize() const throw(NotOpen, std::runtime_error) {
+ECharacterSize SerialPort::getCharSize() const noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -114,7 +112,7 @@ ECharacterSize SerialPort::getCharSize() const throw(NotOpen, std::runtime_error
   }
 }
 
-EStopBits SerialPort::getNumOfStopBits() const throw(NotOpen, std::runtime_error) {
+EStopBits SerialPort::getNumOfStopBits() const noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -136,7 +134,7 @@ EStopBits SerialPort::getNumOfStopBits() const throw(NotOpen, std::runtime_error
   }
 }
 
-EParity SerialPort::getParity() const throw(NotOpen, std::runtime_error) {
+EParity SerialPort::getParity() const noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -160,7 +158,7 @@ EParity SerialPort::getParity() const throw(NotOpen, std::runtime_error) {
   }
 }
 
-EFlowControl SerialPort::getFlowControl() const throw(NotOpen, std::runtime_error) {
+EFlowControl SerialPort::getFlowControl() const noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -187,9 +185,7 @@ EFlowControl SerialPort::getFlowControl() const throw(NotOpen, std::runtime_erro
 /*
  * Serial port configuration settings.
  */
-void SerialPort::setBaudRate(const EBaudRate baudRate) throw(UnsupportedBaudRate, NotOpen,
-                                                 std::invalid_argument,
-                                                 std::runtime_error) {
+void SerialPort::setBaudRate(const EBaudRate baudRate) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -283,9 +279,7 @@ void SerialPort::setBaudRate(const EBaudRate baudRate) throw(UnsupportedBaudRate
   if (ec) throw std::runtime_error("Error setting baud rate");
 }
 
-void SerialPort::setCharSize(const ECharacterSize charSize) throw(NotOpen,
-                                                      std::invalid_argument,
-                                                      std::runtime_error) {
+void SerialPort::setCharSize(const ECharacterSize charSize) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -315,9 +309,7 @@ void SerialPort::setCharSize(const ECharacterSize charSize) throw(NotOpen,
   if (ec) throw std::runtime_error("Error setting character size");
 }
 
-void SerialPort::setNumOfStopBits(const EStopBits stopBits) throw(NotOpen,
-                                                      std::invalid_argument,
-                                                      std::runtime_error) {
+void SerialPort::setNumOfStopBits(const EStopBits stopBits) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -346,8 +338,7 @@ void SerialPort::setNumOfStopBits(const EStopBits stopBits) throw(NotOpen,
   if (ec) throw std::runtime_error("Error setting num. of stop bits");
 }
 
-void SerialPort::setParity(const EParity parity) throw(NotOpen, std::invalid_argument,
-                                           std::runtime_error) {
+void SerialPort::setParity(const EParity parity) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -379,8 +370,7 @@ void SerialPort::setParity(const EParity parity) throw(NotOpen, std::invalid_arg
   if (ec) throw std::runtime_error("Error setting parity");
 }
 
-void SerialPort::setFlowControl(const EFlowControl flowControl) throw(
-    NotOpen, std::invalid_argument, std::runtime_error) {
+void SerialPort::setFlowControl(const EFlowControl flowControl) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -420,8 +410,7 @@ bool SerialPort::isOpen() const {
 }
 
 void SerialPort::read(DataBuffer& dataBuffer, const unsigned int numOfBytes,
-          const unsigned int msTimeout) throw(NotOpen, ReadTimeout,
-                                                  std::runtime_error) {
+          const unsigned int msTimeout) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   dataBuffer.resize(0);
@@ -432,8 +421,7 @@ void SerialPort::read(DataBuffer& dataBuffer, const unsigned int numOfBytes,
 }
 
 std::string SerialPort::readLine(const unsigned int msTimeout, 
-                                 const char lineTerminator) 
-    throw(NotOpen, ReadTimeout, std::runtime_error) {
+                                 const char lineTerminator) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   std::string result;
@@ -445,8 +433,7 @@ std::string SerialPort::readLine(const unsigned int msTimeout,
   return result;
 }
 
-void SerialPort::writeByte(const unsigned char dataByte) throw(NotOpen,
-                                                   std::runtime_error) {
+void SerialPort::writeByte(const unsigned char dataByte) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -461,22 +448,22 @@ void SerialPort::writeByte(const unsigned char dataByte) throw(NotOpen,
   if (n != 1) throw std::runtime_error("Unexpected number of bytes sent");
 }
 
-void SerialPort::write(const DataBuffer& dataBuffer) throw(NotOpen, std::runtime_error) {
+void SerialPort::write(const DataBuffer& dataBuffer) noexcept {
   BOOST_FOREACH (DataBuffer::value_type byte, dataBuffer) { writeByte(byte); }
 }
 
-void SerialPort::write(const std::string& dataString) throw(NotOpen, std::runtime_error) {
+void SerialPort::write(const std::string& dataString) noexcept {
   BOOST_FOREACH (std::string::value_type c, dataString) { writeByte(c); }
 }
 
-void SerialPort::sendBreak() throw(NotOpen, std::runtime_error) {
+void SerialPort::sendBreak() noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
   boost::system::error_code ec;
   serialPort_.send_break(ec);
   if (ec) throw std::runtime_error(ec.message());
 }
 
-void SerialPort::close() throw(NotOpen) {
+void SerialPort::close() noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   boost::system::error_code ec;
@@ -488,10 +475,7 @@ void SerialPort::timedReadHandler(boost::optional<boost::system::error_code>* a,
   a->reset(b);
 }
 
-unsigned char SerialPort::readByte(
-    const unsigned int msTimeout) throw(ISerialPort::NotOpen,
-                                        ISerialPort::ReadTimeout,
-                                        std::runtime_error) {
+unsigned char SerialPort::readByte(const unsigned int msTimeout) noexcept {
   if (!serialPort_.is_open()) throw NotOpen();
 
   unsigned char byte;

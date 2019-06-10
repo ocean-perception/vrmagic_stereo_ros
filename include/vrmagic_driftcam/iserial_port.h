@@ -127,8 +127,7 @@ class ISerialPort {
   /*
    * Helper functions.
    */
-  static EBaudRate baudRateFromInteger(const unsigned int baudRate) throw(
-      std::invalid_argument) {
+  static EBaudRate baudRateFromInteger(const unsigned int baudRate) noexcept {
     switch (baudRate) {
       case 50:
         return BAUD_50;
@@ -170,13 +169,10 @@ class ISerialPort {
       case 460800:
         return BAUD_460800;
 #endif
-      default:
-        throw std::invalid_argument("Invalid baud rate string");
     }
   }
 
-  static ECharacterSize charSizeFromInteger(const unsigned int charSize) throw(
-      std::invalid_argument) {
+  static ECharacterSize charSizeFromInteger(const unsigned int charSize) noexcept {
     switch (charSize) {
       case 5:
         return CHAR_SIZE_5;
@@ -186,88 +182,68 @@ class ISerialPort {
         return CHAR_SIZE_7;
       case 8:
         return CHAR_SIZE_8;
-      default:
-        throw std::invalid_argument("Invalid char size string");
+        
     }
   }
 
-  static EStopBits numOfStopBitsFromInteger(const unsigned int stopBits) throw(
-      std::invalid_argument) {
+  static EStopBits numOfStopBitsFromInteger(const unsigned int stopBits) noexcept {
     switch (stopBits) {
       case 1:
         return STOP_BITS_1;
       case 2:
         return STOP_BITS_2;
-      default:
-        throw std::invalid_argument("Invalid num. of stop bits string");
     }
   }
 
-  static EParity parityFromString(const std::string& parity) throw(
-      std::invalid_argument) {
+  static EParity parityFromString(const std::string& parity) noexcept {
     if (parity == "EVEN")
       return PARITY_EVEN;
     else if (parity == "ODD")
       return PARITY_ODD;
     else if (parity == "NONE")
       return PARITY_NONE;
-    else
-      throw std::invalid_argument("Invalid parity string");
   }
 
   static EFlowControl flowControlFromString(
-      const std::string& flowControl) throw(std::invalid_argument) {
+      const std::string& flowControl) noexcept {
     if (flowControl == "HARD")
       return FLOW_CONTROL_HARD;
     else if (flowControl == "SOFT")
       return FLOW_CONTROL_SOFT;
     else if (flowControl == "NONE")
       return FLOW_CONTROL_NONE;
-    else
-      throw std::invalid_argument("Invalid flow control string");
   }
 
   /*
    * Open a serial port.
    */
-  virtual void open(const std::string& serialPortPath) throw(
-      AlreadyOpen, OpenFailed, UnsupportedBaudRate, std::invalid_argument) = 0;
+  virtual void open(const std::string& serialPortPath) noexcept = 0;
 
   /*
    * Getters for serial port configuration.
    */
-  virtual EBaudRate getBaudRate() const throw(NotOpen, std::runtime_error) = 0;
+  virtual EBaudRate getBaudRate() const noexcept = 0;
 
-  virtual ECharacterSize getCharSize() const
-      throw(NotOpen, std::runtime_error) = 0;
+  virtual ECharacterSize getCharSize() const noexcept = 0;
 
-  virtual EStopBits getNumOfStopBits() const
-      throw(NotOpen, std::runtime_error) = 0;
+  virtual EStopBits getNumOfStopBits() const noexcept= 0;
 
-  virtual EParity getParity() const throw(NotOpen, std::runtime_error) = 0;
+  virtual EParity getParity() const noexcept = 0;
 
-  virtual EFlowControl getFlowControl() const
-      throw(NotOpen, std::runtime_error) = 0;
+  virtual EFlowControl getFlowControl() const noexcept = 0;
 
   /*
    * Serial port configuration settings.
    */
-  virtual void setBaudRate(const EBaudRate baudRate) throw(
-      UnsupportedBaudRate, NotOpen, std::invalid_argument,
-      std::runtime_error) = 0;
+  virtual void setBaudRate(const EBaudRate baudRate) noexcept = 0;
 
-  virtual void setCharSize(const ECharacterSize charSize) throw(
-      NotOpen, std::invalid_argument, std::runtime_error) = 0;
+  virtual void setCharSize(const ECharacterSize charSize) noexcept = 0;
 
-  virtual void setNumOfStopBits(const EStopBits stopBits) throw(
-      NotOpen, std::invalid_argument, std::runtime_error) = 0;
+  virtual void setNumOfStopBits(const EStopBits stopBits) noexcept = 0;
 
-  virtual void setParity(const EParity parity) throw(NotOpen,
-                                                     std::invalid_argument,
-                                                     std::runtime_error) = 0;
+  virtual void setParity(const EParity parity) noexcept = 0;
 
-  virtual void setFlowControl(const EFlowControl flowControl) throw(
-      NotOpen, std::invalid_argument, std::runtime_error) = 0;
+  virtual void setFlowControl(const EFlowControl flowControl) noexcept = 0;
 
   virtual bool isOpen() const = 0;
 
@@ -277,8 +253,7 @@ class ISerialPort {
    * then this method will throw ReadTimeout exception. If msTimeout
    * is 0, then this method will block till data is available.
    */
-  virtual unsigned char readByte(const unsigned int msTimeout = 0) throw(
-      NotOpen, ReadTimeout, std::runtime_error) = 0;
+  virtual unsigned char readByte(const unsigned int msTimeout = 0) noexcept = 0;
 
   /**
    * Read the specified number of bytes from the serial port. The
@@ -292,15 +267,14 @@ class ISerialPort {
    */
   virtual void read(DataBuffer& dataBuffer, const unsigned int numOfBytes = 0,
                     const unsigned int msTimeout =
-                        0) throw(NotOpen, ReadTimeout, std::runtime_error) = 0;
+                        0) noexcept = 0;
 
   /**
    * Read a line of characters from the serial port.
    */
   virtual std::string readLine(
       const unsigned int msTimeout = 0,
-      const char lineTerminator = '\n') throw(NotOpen, ReadTimeout,
-                                              std::runtime_error) = 0;
+      const char lineTerminator = '\n') noexcept = 0;
 
   /**
    * Send a single byte to the serial port.
@@ -308,30 +282,27 @@ class ISerialPort {
    * @throw NotOpen Thrown if this method is called while the serial
    * port is not open.
    */
-  virtual void writeByte(const unsigned char dataByte) throw(
-      NotOpen, std::runtime_error) = 0;
+  virtual void writeByte(const unsigned char dataByte) noexcept = 0;
 
   /**
    * Write the data from the specified vector to the serial port.
    */
-  virtual void write(const DataBuffer& dataBuffer) throw(
-      NotOpen, std::runtime_error) = 0;
+  virtual void write(const DataBuffer& dataBuffer) noexcept = 0;
 
   /**
    * Write a string to the serial port.
    */
-  virtual void write(const std::string& dataString) throw(
-      NotOpen, std::runtime_error) = 0;
+  virtual void write(const std::string& dataString) noexcept = 0;
 
   /**
    * Send a break sequence to the serial port.
    */
-  virtual void sendBreak() throw(NotOpen, std::runtime_error) = 0;
+  virtual void sendBreak() noexcept = 0;
 
   /*
    * Close the serial port.
    */
-  virtual void close() throw(NotOpen) = 0;
+  virtual void close() noexcept = 0;
 
   virtual ~ISerialPort() {}
 };

@@ -29,64 +29,50 @@ class SerialPort : public ISerialPort, private boost::noncopyable {
 
   ~SerialPort() {}
 
-  void open(const std::string& serialPortPath) throw(AlreadyOpen, OpenFailed,
-                                                     UnsupportedBaudRate,
-                                                     std::invalid_argument);
+  void open(const std::string& serialPortPath) noexcept;
 
-  EBaudRate getBaudRate() const throw(NotOpen, std::runtime_error);
+  EBaudRate getBaudRate() const noexcept;
 
-  ECharacterSize getCharSize() const throw(NotOpen, std::runtime_error);
+  ECharacterSize getCharSize() const noexcept;
 
-  EStopBits getNumOfStopBits() const throw(NotOpen, std::runtime_error);
+  EStopBits getNumOfStopBits() const noexcept;
 
-  EParity getParity() const throw(NotOpen, std::runtime_error);
+  EParity getParity() const noexcept;
 
-  EFlowControl getFlowControl() const throw(NotOpen, std::runtime_error);
+  EFlowControl getFlowControl() const noexcept;
 
   /*
    * Serial port configuration settings.
    */
-  void setBaudRate(const EBaudRate baudRate) throw(UnsupportedBaudRate, NotOpen,
-                                                   std::invalid_argument,
-                                                   std::runtime_error);
+  void setBaudRate(const EBaudRate baudRate) noexcept;
 
-  void setCharSize(const ECharacterSize charSize) throw(NotOpen,
-                                                        std::invalid_argument,
-                                                        std::runtime_error);
+  void setCharSize(const ECharacterSize charSize) noexcept;
 
-  void setNumOfStopBits(const EStopBits stopBits) throw(NotOpen,
-                                                        std::invalid_argument,
-                                                        std::runtime_error);
+  void setNumOfStopBits(const EStopBits stopBits) noexcept;
 
-  void setParity(const EParity parity) throw(NotOpen, std::invalid_argument,
-                                             std::runtime_error);
+  void setParity(const EParity parity) noexcept;
 
-  void setFlowControl(const EFlowControl flowControl) throw(
-      NotOpen, std::invalid_argument, std::runtime_error);
+  void setFlowControl(const EFlowControl flowControl) noexcept;
 
   bool isOpen() const;
 
-  unsigned char readByte(const unsigned int msTimeout = 0) throw(
-      NotOpen, ReadTimeout, std::runtime_error);
+  unsigned char readByte(const unsigned int msTimeout = 0) noexcept;
 
   void read(DataBuffer& dataBuffer, const unsigned int numOfBytes = 0,
-            const unsigned int msTimeout = 0) throw(NotOpen, ReadTimeout,
-                                                    std::runtime_error);
+            const unsigned int msTimeout = 0) noexcept;
   std::string readLine(
       const unsigned int msTimeout = 0,
-      const char lineTerminator = '\n') throw(NotOpen, ReadTimeout,
-                                              std::runtime_error);
+      const char lineTerminator = '\n') noexcept;
 
-  void writeByte(const unsigned char dataByte) throw(NotOpen,
-                                                     std::runtime_error);
+  void writeByte(const unsigned char dataByte) noexcept;
 
-  void write(const DataBuffer& dataBuffer) throw(NotOpen, std::runtime_error);
+  void write(const DataBuffer& dataBuffer) noexcept;
 
-  void write(const std::string& dataString) throw(NotOpen, std::runtime_error);
+  void write(const std::string& dataString) noexcept;
 
-  void sendBreak() throw(NotOpen, std::runtime_error);
+  void sendBreak() noexcept;
 
-  void close() throw(NotOpen);
+  void close() noexcept;
 
  private:
   boost::asio::io_service io_;
