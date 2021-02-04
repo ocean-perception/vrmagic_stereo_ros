@@ -43,6 +43,11 @@ void Driftcam::ApiHandle::update() {
                 }
                 cam2_found = true;
             }
+            if (cam1_found && cam2_found) {
+                // Set cam1 and 2 externally triggered
+                cam1_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
+                cam2_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
+            }
             VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
         }
 
