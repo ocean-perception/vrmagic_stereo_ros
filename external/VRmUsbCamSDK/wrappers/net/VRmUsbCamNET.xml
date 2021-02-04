@@ -1,0 +1,491 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+        "VRmUsbCamNET"
+    </assembly>
+  <members>
+    <member name="E:VRmUsbCamNET.VRmUsbCam.DeviceChange">
+      <summary>a device change event was signaled by the system. this event is only emitted from within UpdateDeviceKeyList()</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.VRmUsbCam.DeviceChangeEventHandler">
+      <summary>delegate type of DeviceChange event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.VRmUsbCam.DeviceChangeEventArgs.DeviceChangeType">
+      <summary>type of change that caused the event</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.VRmUsbCam.DeviceChangeEventArgs">
+      <summary>arguments of DeviceChange events</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.VRmUsbCam.Version">
+      <summary>get the version of the API</summary>
+      <remarks>the version number is represented as decimal integer with 4 digits, ie. API version v2.3.0.0 is represented as decimal 2300.</remarks>
+    </member>
+    <member name="P:VRmUsbCamNET.VRmUsbCam.DeviceKeyList">
+      <summary>list of currently connected VRmagic devices</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.VRmUsbCam.CurrentTime">
+      <summary>current time in ms since last call to RestartTimer</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.DeactivateDevice(System.Int32,System.Int32,System.Int32)">
+      <summary>deactivates a VRmagic USB device in the current hardware profile, identified by vendor id, product id and serial number</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.ActivateAllDevices">
+      <summary>activates all VRmagic USB devices in the current hardware profile that are currently deactivated</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.ActivateDevice(System.Int32,System.Int32,System.Int32)">
+      <summary>activates a VRmagic USB device in the current hardware profile, identified by vendor id, product id and serial number</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.SetImage(VRmUsbCamNET.ImageFormat,System.IntPtr,System.Int32)">
+      <summary>create a new Image as container for a given buffer</summary>
+      <remarks>the buffer must remain valid for the lifetime of the created object and is not automatically deallocated when the Image object is released.</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.NewImage(VRmUsbCamNET.ImageFormat)">
+      <summary>creates a new Image object in the specified ImageFormat</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.AttachToVRmUsbCamDS(System.Object)">
+      <summary>create a new Device Object and attach to specified VRmUsbCam DirectShow Capture Source</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.OpenDevice(VRmUsbCamNET.DeviceKey)">
+      <summary>create a new Device Object and bind to the specified physical device</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.ConvertImage(VRmUsbCamNET.Image,VRmUsbCamNET.Image)">
+      <summary>convert the given source Image into the buffer of the given target image</summary>
+      <remarks>the target image must be valid, ie. created by NewImage, SetImage or Image.Clone</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.RestartTimer">
+      <summary>restart reference timer</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.UpdateDeviceKeyListEx(System.Boolean,System.Boolean,System.Boolean)">
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.UpdateDeviceKeyList">
+      <summary>search for compatible devices and update DeviceKeyList property. if your application wants to support PnP, you should call this function periodically, at least once every 5 seconds, and handle the DeviceChange events</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.EnableLoggingEx(System.String)">
+      <summary>for customer support, enable the logging facilities (with selectable file name)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.VRmUsbCam.EnableLogging">
+      <summary>for customer support, enable the logging facilities</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.VRmUsbCam">
+      <summary>VRmUsbCam root class</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.Dispose">
+      <summary>close the device and free all occupied resources, equivalent to Close()</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.PropertyAttribsChanged">
+      <summary>some Device PropertyAttribs changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.PropertyInfoChanged">
+      <summary>some Device PropertyInfo changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.TargetFormatListChanged">
+      <summary>the list of Device Target Formats changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.PropertyListChanged">
+      <summary>the list of Device Properties changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.PropertyValueChanged">
+      <summary>a Device PropertyValue changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.SourceFormatChanged">
+      <summary>the Device Source Format changed</summary>
+    </member>
+    <member name="E:VRmUsbCamNET.Device.LutChanged">
+      <summary>the Device LUT changed</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyAttribsChangedEventHandler">
+      <summary>delegate type of Device.PropertyAttribsChanged event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyAttribsChangedEventArgs.PropId">
+      <summary>associated property id</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.PropertyAttribsChangedEventArgs.#ctor(VRmUsbCamNET.PropId)">
+      <summary>creates a new PropertyAttribsChangedEventArgs</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyAttribsChangedEventArgs">
+      <summary>arguments of Device.PropertyAttribsChanged event</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyValueChangedEventHandler">
+      <summary>delegate type of Device.PropertyValueChanged event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyValueChangedEventArgs.PropId">
+      <summary>associated property id</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.PropertyValueChangedEventArgs.#ctor(VRmUsbCamNET.PropId)">
+      <summary>creates a new PropertyValueChangedEventArgs</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyValueChangedEventArgs">
+      <summary>arguments of Device.PropertyValueChanged event</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyInfoChangedEventHandler">
+      <summary>delegate type of Device.PropertyInfoChanged event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyInfoChangedEventArgs.PropId">
+      <summary>associated property id</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.PropertyInfoChangedEventArgs.#ctor(VRmUsbCamNET.PropId)">
+      <summary>creates a new PropertyInfoChangedEventArgs</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.PropertyInfoChangedEventArgs">
+      <summary>arguments of Device.PropertyInfoChanged event</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.LutChangedEventHandler">
+      <summary>delegate type of Device.LutChanged event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.LutChangedEventArgs.SensorPort">
+      <summary>associated sensor port id</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.LutChangedEventArgs.#ctor(System.Int32)">
+      <summary>creates a new LutChangedEventArgs</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device.LutChangedEventArgs">
+      <summary>arguments of Device.LutChanged event</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyValue(VRmUsbCamNET.PropId)">
+      <summary>value of property with given id</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyAttribs(VRmUsbCamNET.PropId)">
+      <summary>attributes of property with given id</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertySupported(VRmUsbCamNET.PropId)">
+      <summary>determines whether the specified property is supported</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyInfo(VRmUsbCamNET.PropId)">
+      <summary>PropInfo struct of specified property</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.PropertyList">
+      <summary>list of supported properties</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.Running">
+      <summary>determines whether the frame grabber is running</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.ConfigIncludesUnsupportedValues">
+      <summary>true if SaveConfig()/ConfigData may drop some values</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.ConfigData">
+      <summary>current device config in native byte-array representation</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.TargetFormatList(System.Int32)">
+      <summary>list of formats the currently selected source format of the specified port can be converted to by VRmUsbCam.ConvertImage</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.SourceFormat(System.Int32)">
+      <summary>currently selected source format</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.SensorPortList">
+      <summary>list of image sensor ports</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Device.DeviceKey">
+      <summary>DeviceKey of the associated physical device</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.FindSensorPortListIndex(System.Int32)">
+      <summary>Utility function: query index in sensor port list for specified sensor port number</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.CreatePropertyPage">
+      <summary>create a property page for the device (as independent window)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.CreatePropertyPage(System.IntPtr,System.Drawing.Rectangle)">
+      <summary>create a property page for the device</summary>
+      <remarks>if hWndParent is null, a new independent window is created,
+if hWndParent is not null, a child window is created within the given parent.
+rect determines the initial window position.</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.ResetFrameCounter">
+      <summary>reset Frame Counter</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.DeleteConfig(System.Int32)">
+      <summary>deletes the given config from the device, valid values for f_id = 2 to 9</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.SaveConfigRequiresFirmwareCompression(System.Int32)">
+      <summary>check if next SaveConfig requires a firmware compression which takes some seconds (blocking), valid values for id = 1 to 9</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.SaveConfig(System.Int32)">
+      <summary>saves the current config in hardware, valid values for f_id = 1 to 9</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.LoadConfig(System.Int32)">
+      <summary>load config from the device, valid values for id = 0 to 9. id=0 means factory defaults. the grabber must be stopped when you call this.</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.SaveUserData(System.Byte[])">
+      <summary>save user data in eeprom</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.LoadUserData">
+      <summary>load user data from eeprom</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.SoftTrigger">
+      <summary>initiate a soft trigger (device must supports this)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.UnlockNextImage(VRmUsbCamNET.Image)">
+      <summary>unlock an Image that was previously locked by LockNextImage</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.LockNextImage(System.Int32,System.Int32@)">
+      <summary>obsolete. use lock next image with timeout parameter</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.LockNextImage(System.Int32,System.Int32@,System.Int32)">
+      <summary>get the next locked image from a specified sensor port. unlock afterwards by UnlockNextImage</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.Close">
+      <summary>close the device and free all occupied resources, equivalent to Dispose()</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.IsNextImageReady(System.Int32)">
+      <summary>check whether next image at specified sensor port is ready and can immediately be locked by LockNextImage(port)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.Stop">
+      <summary>stop image grabbing, resources of unlocked images are freed, locked images are kept until released with UnlockNextImage</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Device.Start">
+      <summary>start image grabbing</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Device">
+      <summary>represents a physical VRmUsbCam device</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DevicePropertyPage.Dispose">
+      <summary>close the property page and free all occupied resources</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DevicePropertyPage.Handle">
+      <summary>window handle of the property page</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DevicePropertyPage.Visible">
+      <summary>visibility state of the page</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DevicePropertyPage.Location">
+      <summary>position of the page</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DevicePropertyPage.Size">
+      <summary>size of the page</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DevicePropertyPage.Hide">
+      <summary>hide the property page (only valid if hWndParent is null)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DevicePropertyPage.Show">
+      <summary>show the property page (only valid if hWndParent is null)</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DevicePropertyPage.SizeHint">
+      <summary>the size this property page looks best</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DevicePropertyPage.Move(System.Drawing.Rectangle)">
+      <summary>move and resize the page to the given position and size</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.DevicePropertyPage">
+      <summary>device property page (device GUI)</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.Dispose">
+      <summary>unlocks as required and frees occupied resources</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.Crop(System.Drawing.Rectangle)">
+      <summary>get cropped part of this Image without copying of image data</summary>
+      <remarks>The image data of the returned image is actually shared with this image.</remarks>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.Footer">
+      <summary>Footer Data of Image</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.SensorPort">
+      <summary>Image Sensor Port this image originates from</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.FrameCounter">
+      <summary>frame Counter of Image</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.BufferSize">
+      <summary>size (in bytes) of the contained image buffer</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.Buffer">
+      <summary>pointer to the contained image buffer</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.Pitch">
+      <summary>pitch (in bytes) of the stored image data</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.TimeStamp">
+      <summary>timestamp of image as received from grabber</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.ImageFormat">
+      <summary>ImageFormat of image</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.UnlockBits(System.Byte[0:,0:]@)">
+      <summary>unlock the contained image buffer. pass the array returned from LockBits()</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.LockBits">
+      <summary>lock the contained image buffer represented as two-dimensional Byte Array of size Pitch x ImageFormat.Height</summary>
+      <remarks>you must unlock the returned array by UnlockBits() after usage.</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.ToInt32Array">
+      <summary>copies the image into a two-dimensional Int32 Array</summary>
+      <remarks>the image must be represented in an appropriate color format, like ColorFormat.ARGB_4X8.
+the returned array will be overwritten by subsequent calls to any of the ToXXXArray() methods</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.ToInt16Array">
+      <summary>copies the image into a two-dimensional Int16 Array</summary>
+      <remarks>the image must be represented in an appropriate color format, like ColorFormat.RGB_565.
+the returned array will be overwritten by subsequent calls to any of the ToXXXArray() methods</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.ToByteArray">
+      <summary>copies the image into a two-dimensional Byte Array</summary>
+      <remarks>the returned array will be overwritten by subsequent calls to any of the ToXXXArray() methods</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.ConvertToBitmap(VRmUsbCamNET.ImageFormat)">
+      <summary>convert the image into a Drawing.Bitmap in the specified target format</summary>
+      <remarks>the specified format must be in the target format list</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.ToBitmap">
+      <summary>copies the image into a Drawing.Bitmap</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.Clone">
+      <summary>creates a new copy of this image</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.#ctor(VRmUsbCamNET.ImageFormat,System.IntPtr,System.Int32)">
+      <summary>create a new image with the given format, referencing the given buffer (equivalent to VRmUsbCam.SetImage()</summary>
+      <remarks>the buffer must remain valid for the lifetime of the created object and is not automatically deallocated when the Image object is released.</remarks>
+    </member>
+    <member name="M:VRmUsbCamNET.Image.#ctor(VRmUsbCamNET.ImageFormat)">
+      <summary>create a new image with the given format (equivalent to VRmUsbCam.NewImage())</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Image.BUFFER_SIZE_MAX">
+      <summary>special value for BufferSize</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Image">
+      <summary>image container</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.Clone">
+      <summary>creates a new ImageFormat as copy of the this format</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.FlipVertical">
+      <summary>toggles the modifier for vertical flip</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.FlipHorizontal">
+      <summary>toggles the modifier for horizontal flip</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.ToPixelFormat">
+      <summary>returns the Drawing.PixelFormat that is equivalent to the ColorFormat of this format</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.ToString">
+      <summary>creates a user-readable string representation of this format</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.Description">
+      <summary>description of this format (only used for Device Source Formats)</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.PixelDepth">
+      <summary>pixel depth (in bytes) of this format</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.TargetFormatList">
+      <summary>list of formats this format can be converted to by VRmUsbCam.ConvertImage</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.ImageModifier">
+      <summary>bit mask of image modifiers</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.ColorFormat">
+      <summary>color format</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.ImageFormat.Size">
+      <summary>size of image in pixels</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.#ctor(System.Drawing.Size,VRmUsbCamNET.ColorFormat,VRmUsbCamNET.ImageModifier)">
+      <summary>create a new image format from the given size, color format and image modifiers</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.ImageFormat.#ctor">
+      <summary>create a new (empty) image format</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.ImageFormat">
+      <summary>represents a VRmUsbCam image format</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DeviceKey.Dispose">
+      <summary>frees all resources occupied by this device key</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.LocalIpAddress">
+      <summary>IP address string of local interface that is to be used for communication (for non-ethernet devices, this is an empty string)</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.GroupId">
+      <summary>group id</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.IpAddress">
+      <summary>IP address string (for non-ethernet devices, this is an empty string)</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.ProductId">
+      <summary>product id</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.VendorId">
+      <summary>vendor id</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.Busy">
+      <summary>is device currently opened (busy)?</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.SerialString">
+      <summary>device serial string</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.Serial">
+      <summary>device serial number</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.Product">
+      <summary>product string</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.DeviceKey.Manufacturer">
+      <summary>manufacturer string</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.DeviceKey.ToString">
+      <summary>get combined product/serial string</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.DeviceKey">
+      <summary>identifies a device</summary>
+      <remarks>a device key is a unique combination of serial, manufacturer
+and product string</remarks>
+    </member>
+    <member name="P:VRmUsbCamNET.Exception.Number">
+      <summary>Error number associated with this Exception</summary>
+    </member>
+    <member name="P:VRmUsbCamNET.Exception.Description">
+      <summary>Text message associated with this Exception</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.Exception">
+      <summary>Exception that is thrown from within any component of VRmUsbCam</summary>
+      <remarks>in addition to the standard Exception members, this class provides an
+ErrorNumber</remarks>
+    </member>
+    <member name="F:VRmUsbCamNET.PropAttribs.Step">
+      <summary>stepping value</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropAttribs.Max">
+      <summary>maximum value</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropAttribs.Min">
+      <summary>minimum value</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropAttribs.Default">
+      <summary>default value</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.PropAttribs">
+      <summary>property attributes struct</summary>
+    </member>
+    <member name="M:VRmUsbCamNET.PropInfo.ToString">
+      <summary>gets property id string</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropInfo.Writeable">
+      <summary>is the property writeable?</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropInfo.Description">
+      <summary>property description string</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropInfo.IdString">
+      <summary>property id string</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropInfo.Type">
+      <summary>property type</summary>
+    </member>
+    <member name="F:VRmUsbCamNET.PropInfo.Id">
+      <summary>property identifier</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.PropInfo">
+      <summary>property information struct</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.PropId">
+      <summary>enumeration of property identifiers</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.DeviceChangeType">
+      <summary>enumeration of Device Change Types, see VRmUsbCam.DeviceChange event</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.ImageModifier">
+      <summary>enumeration of modifiers for Images</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.ColorFormat">
+      <summary>enumeration of color formats</summary>
+    </member>
+    <member name="T:VRmUsbCamNET.ErrorNumber">
+      <summary>enumeration of custom error codes</summary>
+    </member>
+  </members>
+</doc>

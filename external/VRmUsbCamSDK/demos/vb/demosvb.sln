@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "demovbviewer", "viewer\demovbviewer.vbproj", "{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "demovbxmldeviceinfo", "xmldeviceinfo\demovbxmldeviceinfo.vbproj", "{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|x64.ActiveCfg = Debug|x64
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|x64.Build.0 = Debug|x64
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|x86.ActiveCfg = Debug|x86
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Debug|x86.Build.0 = Debug|x86
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|x64.ActiveCfg = Release|x64
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|x64.Build.0 = Release|x64
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|x86.ActiveCfg = Release|x86
+		{0A4563F7-E9C9-40D7-8E7B-38C2D3D59393}.Release|x86.Build.0 = Release|x86
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|x64.ActiveCfg = Debug|x64
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|x64.Build.0 = Debug|x64
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|x86.ActiveCfg = Debug|x86
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Debug|x86.Build.0 = Debug|x86
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|x64.ActiveCfg = Release|x64
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|x64.Build.0 = Release|x64
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|x86.ActiveCfg = Release|x86
+		{DFC939C7-DF96-48B1-92B1-5FB132CD5D8D}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

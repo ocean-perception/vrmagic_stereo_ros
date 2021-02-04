@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="api">
+      <UniqueIdentifier>{5c8aef13-3fef-4cc3-8347-beaafdc59167}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\wrappers\c++\vrmusbcamcpp.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="initcamera.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="readcamera.cpp" />
+    <ClCompile Include="sdlwindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\wrappers\c++\vrmusbcamcpp.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="demo.h" />
+  </ItemGroup>
+</Project>

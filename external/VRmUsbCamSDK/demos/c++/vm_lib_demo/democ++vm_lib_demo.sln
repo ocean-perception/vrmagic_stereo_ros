@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "democ++vm_lib_demo", "democ++vm_lib_demo.vcproj", "{EF549331-D4BE-4950-A313-6735772CD727}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF549331-D4BE-4950-A313-6735772CD727}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF549331-D4BE-4950-A313-6735772CD727}.Debug|Win32.Build.0 = Debug|Win32
+		{EF549331-D4BE-4950-A313-6735772CD727}.Release|Win32.ActiveCfg = Release|Win32
+		{EF549331-D4BE-4950-A313-6735772CD727}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

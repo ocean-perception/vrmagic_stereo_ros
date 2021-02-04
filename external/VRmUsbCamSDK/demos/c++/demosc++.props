@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <VRMUSBCAMDIR>..\..\..</VRMUSBCAMDIR>
+    <SDLDIR>$(LIBDIR)\sdl</SDLDIR>
+    <BOOSTDIR>$(LIBDIR)\boost</BOOSTDIR>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27924.0</_ProjectFileVersion>
+    <_PropertySheetDisplayName>DemosC++</_PropertySheetDisplayName>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="VRMUSBCAMDIR">
+      <Value>$(VRMUSBCAMDIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="SDLDIR">
+      <Value>$(SDLDIR)</Value>
+    </BuildMacro>
+    <BuildMacro Include="BOOSTDIR">
+      <Value>$(BOOSTDIR)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

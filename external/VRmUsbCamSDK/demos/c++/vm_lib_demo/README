@@ -1,0 +1,8 @@
+This is a small demonstration program for the vrmusbcam library and the 
+object recognition functionality of the vm_lib machine vision library. 
+
+You need the SDL-library including development package installed on your
+system (libsdl1.2 and libsdl1.2-dev packages under Debian).
+
+
+Quit the demo application with ESC.
