@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>vrmagic_stereo_ros</name>
+  <version>0.0.1</version>
+  <description>The vrmagic_stereo_ros package</description>
+  <maintainer email="miquel.massot@gmail.com">Miquel Massot</maintainer>
+  <license>BSD</license>
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- ROS Dependencies -->
+  <depend>roscpp</depend>
+
+</package>
