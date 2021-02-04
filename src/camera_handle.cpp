@@ -180,7 +180,7 @@ void CameraHandle::grab() {
             std::stringstream stream;
             stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_target_img->m_time_stamp/1000.0;
             std::string stamp = stream.str();
-            std::string filename = identifier_ + "_" + stamp + ".png";
+            std::string filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
             std::cout << "Saving file: " << filename << std::endl;
             VRMEXECANDCHECK(VRmUsbCamSavePNG(filename.c_str(),
                                              p_target_img,

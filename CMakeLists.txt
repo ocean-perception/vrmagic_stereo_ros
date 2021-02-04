@@ -25,6 +25,7 @@ include_directories(
   external/VRmUsbCamSDK/include
   external/VRmUsbCamSDK/wrappers/c++
   ${Boost_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
 
 
@@ -45,6 +46,7 @@ target_link_libraries(
   vrmusbcamcpp
   ${VRMAGICUSB2_LIBRARIES}
   ${Boost_LIBRARIES}
+  ${catkin_LIBRARIES}
 )
 
 install(

@@ -3,7 +3,9 @@
 namespace Driftcam {
 class ApiHandle {
   public:
-    ApiHandle(const std::string& cam1_serial, const std::string& cam2_serial);
+    ApiHandle(
+        const std::string& cam1_serial, const std::string& cam1_path, 
+        const std::string& cam2_serial, const std::string& cam2_path);
     ~ApiHandle() {
         if (cam1_.opened()) {
             cam1_.stop();
@@ -29,6 +31,8 @@ class ApiHandle {
     void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void* fp_user_data, const void* fcp_callback_params);
     std::string cam1_serial_;
     std::string cam2_serial_;
+    std::string cam1_path_;
+    std::string cam2_path_;
     Driftcam::CameraHandle cam1_;
     Driftcam::CameraHandle cam2_;
 };

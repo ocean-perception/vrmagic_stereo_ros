@@ -52,11 +52,13 @@ class CameraHandle {
     void listAllProperties();
     bool opened() {return opened_;}
     void disconnected() {opened_ = false;}
+    void setPath(const std::string& path) {path_ = path;}
 
  private:
     VRmUsbCamDevice device_;
     VRmDWORD port_;
     std::string identifier_;
+    std::string path_;
     double clock_epoch_;
     bool setPropertyPort();
     bool verifyFrameRate();

@@ -10,9 +10,13 @@
 #include "vrmagic_driftcam/api_handle.h"
 
 
-Driftcam::ApiHandle::ApiHandle(const std::string& cam1_serial, const std::string& cam2_serial) {
+Driftcam::ApiHandle::ApiHandle(
+        const std::string& cam1_serial, const std::string& cam1_path, 
+        const std::string& cam2_serial, const std::string& cam2_path) {
     cam1_serial_ = cam1_serial;
+    cam1_path_ = cam1_path;
     cam2_serial_ = cam2_serial;
+    cam2_path_ = cam2_path;
     update();
 }
 
@@ -35,12 +39,14 @@ void Driftcam::ApiHandle::update() {
                 if (!cam1_.opened()) {
                     cam1_.open(p_device_key, p_device_str);
                 }
+                cam1_.setPath(cam1_path_);
                 cam1_found = true;
             }
             if (std::strcmp(p_device_str, cam2_serial_.c_str()) == 0) {
                 if (!cam2_.opened()) {
                     cam2_.open(p_device_key, p_device_str);
                 }
+                cam2_.setPath(cam2_path_);
                 cam2_found = true;
             }
             if (cam1_found && cam2_found) {

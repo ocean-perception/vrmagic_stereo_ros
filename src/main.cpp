@@ -3,8 +3,9 @@
 #include <iostream>
 #include <thread>
 
+#include <ros/ros.h>
+
 #include <vrmagic_driftcam/api_handle.h>
-#include <vrmagic_driftcam/serial_port.h>
 
 bool something_changed = false;
 
@@ -43,6 +44,22 @@ int main(int argc, char** argv) {
     // of an error
     atexit(VRmUsbCamCleanup);
 
+    // Init ROS node
+    ros::init(argc, argv, "vrmagic_stereo_ros");
+    ros::NodeHandle nh;
+    ros::NodeHandle nhp("~");
+
+    std::string save_path;
+
+    if (!nhp.hasParam("save_path")) {
+        ROS_INFO("No param named 'save_path'");
+        return -1;
+    }
+
+    nhp.getParam("save_path", save_path);
+
+    std::cout << "Param val" << save_path << std::endl;
+
     // read libversion (for informational purposes only)
     VRmDWORD libversion;
     VRMEXECANDCHECK(VRmUsbCamGetVersion(&libversion));
@@ -52,50 +69,38 @@ int main(int argc, char** argv) {
     std::cout << "========================================================\n";
     std::cout << "VRmUsbCam2 C API (v." << libversion << ")\n\n";
 
-    Driftcam::SerialPort serial_port;
-    bool arduino_available = false;
-    /*try {
-        serial_port.open("COM4");
-        serial_port.setBaudRate(Driftcam::EBaudRate::BAUD_9600);
-        serial_port.setCharSize(Driftcam::ECharacterSize::CHAR_SIZE_8);
-        serial_port.setNumOfStopBits(Driftcam::EStopBits::STOP_BITS_1);
-        serial_port.setParity(Driftcam::EParity::PARITY_NONE);
-        serial_port.setFlowControl(Driftcam::EFlowControl::FLOW_CONTROL_NONE);
-        arduino_available = true;
-    } catch (const std::exception &e) {
-        std::cout << e.what () << '\n';
-    }
-    */
-
     int sp_timeout_ms = 1000;
 
     std::string cam1_serial("QERQR5");
     std::string cam2_serial("FEQH45");
 
-    Driftcam::ApiHandle api(cam1_serial, cam2_serial);
+    Driftcam::ApiHandle api(
+        cam1_serial, save_path, 
+        cam2_serial, save_path);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
     //cam1.listAllProperties();
     //cam2.listAllProperties();
 
-    int i = 0;
-    for(;;) {
+    ros::Rate loop_rate(10);
+
+    int count = 0;
+    while(ros::ok()) {
         VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
         if (something_changed) {
             api.update();
             something_changed = false;
         }
 
-        if (arduino_available) {
-            std::string line = serial_port.readLine(sp_timeout_ms) ;
-            std::cout << "Received: " << line << "\n";
-        }
 
         api.trigger();
         api.grab();
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        i++;
+        ros::spinOnce();
+        loop_rate.sleep();
+        
+        //std::this_thread::sleep_for(std::chrono::seconds(1));
+        count++;
     }
     return 0;
 }
