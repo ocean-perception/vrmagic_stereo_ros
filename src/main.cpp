@@ -4,6 +4,7 @@
 #include <thread>
 
 #include <ros/ros.h>
+#include <std_srvs/Empty.h>
 
 #include <vrmagic_driftcam/api_handle.h>
 
@@ -39,6 +40,18 @@ static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void* fp_user_d
     }
 }
 
+bool startAcquisitionCb(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
+{
+    ROS_WARN("This is a dummy service");
+    return true;
+}
+
+bool stopAcquisitionCb(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
+{
+    ROS_WARN("This is a dummy service");
+    return true;
+}
+
 int main(int argc, char** argv) {
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
@@ -49,6 +62,11 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     ros::NodeHandle nhp("~");
 
+    // Provide a start and stop service
+    ros::ServiceServer start_acquisition_srv = nhp.advertiseService("start_acquisition", startAcquisitionCb);
+    ros::ServiceServer stop_acquisition_srv = nhp.advertiseService("stop_acquisition", stopAcquisitionCb);
+
+    // Read the save path from the launchfile
     std::string save_path;
 
     if (!nhp.hasParam("save_path")) {

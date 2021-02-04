@@ -9,6 +9,7 @@ set(VRMAGICUSB2_INCLUDE_DIRS "external/VRmUsbCamSDK/include external/VRmUsbCamSD
 find_package(catkin REQUIRED COMPONENTS
   # ROS Dependencies
   roscpp
+  std_srvs
 )
 
 find_package(Boost REQUIRED system)
