@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="vrmagic_stereo_ros" output="screen"/>
+</launch>
