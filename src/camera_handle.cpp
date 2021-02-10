@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <chrono>
 #include <cstring>
+#include <unistd.h>
 
 #include "vrmagic_driftcam/camera_handle.h"
 
@@ -128,6 +129,12 @@ void CameraHandle::trigger() {
 void CameraHandle::grab() {
     if (!opened_) return;
 
+    VRmBOOL ready = false;
+    while(!ready) {
+        VRmUsbCamIsNextImageReadyEx(device_, port_, &ready);
+        usleep(10);
+    }
+
     int timeout_ms = 1000;
     bool images_available = false;
 
@@ -148,16 +155,17 @@ void CameraHandle::grab() {
 
         // VRmImageFormat target_format = image_formats_[img_sensorport-1];
 
-        VRmImage* p_target_img = 0;
+        //VRmImage* p_target_img = 0;
 
         // Copy image
-        VRMEXECANDCHECK(VRmUsbCamCopyImage(&p_target_img, p_source_img));
+        //VRMEXECANDCHECK(VRmUsbCamCopyImage(&p_target_img, p_source_img));
 
+        /*
         VRmDWORD frame_counter;
         VRMEXECANDCHECK(VRmUsbCamGetFrameCounter(p_source_img,
                                                  &frame_counter));
-        VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_,
-                                                 &p_source_img));
+        */
+        
 
         // see, if we had to drop some frames due to data transfer stalls.
         // if so, output a message
@@ -178,15 +186,17 @@ void CameraHandle::grab() {
             // uncompressed, max. is 9, use default with -1.
             int compression_level = 0;
             std::stringstream stream;
-            stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_target_img->m_time_stamp/1000.0;
+            stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_source_img->m_time_stamp/1000.0;
             std::string stamp = stream.str();
+
             std::string filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
             std::cout << "Saving file: " << filename << std::endl;
             VRMEXECANDCHECK(VRmUsbCamSavePNG(filename.c_str(),
-                                             p_target_img,
+                                             p_source_img,
                                              compression_level));
         }
-        VRMEXECANDCHECK(VRmUsbCamFreeImage(&p_target_img));
+        VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_, &p_source_img));
+        // VRMEXECANDCHECK(VRmUsbCamFreeImage(&p_target_img));
     } else {
         // VRmUsbCamLockNextImageEx2() did not return an image. why?
         int error_code = VRmUsbCamGetLastErrorCode();
@@ -399,7 +409,7 @@ bool CameraHandle::setTriggerMode(const TriggerMode& triggermode) {
         tmp = VRM_PROPID_GRAB_MODE_FREERUNNING;
     } else if (triggermode == TRIG_EXTERNAL) {
         std::cout << "Setting triggermode: TRIG_EXTERNAL" << std::endl;
-        tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_EXT;
+        tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_EXT; // 0x30800001;  // 813694977
     } else if (triggermode == TRIG_SOFTWARE) {
         std::cout << "Setting triggermode: TRIG_SOFTWARE" << std::endl;
         tmp = VRM_PROPID_GRAB_MODE_TRIGGERED_SOFT;

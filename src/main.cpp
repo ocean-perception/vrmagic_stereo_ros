@@ -97,8 +97,8 @@ int main(int argc, char** argv) {
         cam2_serial, save_path);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
-    //cam1.listAllProperties();
-    //cam2.listAllProperties();
+    // cam1.listAllProperties();
+    // cam2.listAllProperties();
 
     ros::Rate loop_rate(10);
 
@@ -110,8 +110,7 @@ int main(int argc, char** argv) {
             something_changed = false;
         }
 
-
-        api.trigger();
+        // api.trigger();
         api.grab();
 
         ros::spinOnce();

@@ -40,6 +40,7 @@ void Driftcam::ApiHandle::update() {
                     cam1_.open(p_device_key, p_device_str);
                 }
                 cam1_.setPath(cam1_path_);
+                //cam1_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
                 cam1_found = true;
             }
             if (std::strcmp(p_device_str, cam2_serial_.c_str()) == 0) {
@@ -47,12 +48,12 @@ void Driftcam::ApiHandle::update() {
                     cam2_.open(p_device_key, p_device_str);
                 }
                 cam2_.setPath(cam2_path_);
+                //cam2_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
                 cam2_found = true;
             }
             if (cam1_found && cam2_found) {
                 // Set cam1 and 2 externally triggered
-                cam1_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
-                cam2_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
+                std::cout << "Both cameras connected!" << std::endl;
             }
             VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
         }
