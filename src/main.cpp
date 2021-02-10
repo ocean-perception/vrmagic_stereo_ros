@@ -73,10 +73,17 @@ int main(int argc, char** argv) {
         ROS_INFO("No param named 'save_path'");
         return -1;
     }
-
     nhp.getParam("save_path", save_path);
 
-    std::cout << "Param val" << save_path << std::endl;
+    std::string cam_serial("QERQR5");
+    if (!nhp.hasParam("serial")) {
+        ROS_INFO("No param named 'save_path'");
+        return -1;
+    }
+    nhp.getParam("serial", cam_serial);
+
+    std::cout << "save_path" << save_path << std::endl;
+    std::cout << "serial" << cam_serial << std::endl;
 
     // read libversion (for informational purposes only)
     VRmDWORD libversion;
@@ -89,16 +96,8 @@ int main(int argc, char** argv) {
 
     int sp_timeout_ms = 1000;
 
-    std::string cam1_serial("QERQR5");
-    std::string cam2_serial("FEQH45");
-
-    Driftcam::ApiHandle api(
-        cam1_serial, save_path, 
-        cam2_serial, save_path);
+    Driftcam::ApiHandle api(cam_serial, save_path);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
-
-    // cam1.listAllProperties();
-    // cam2.listAllProperties();
 
     ros::Rate loop_rate(10);
 
