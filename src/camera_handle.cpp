@@ -35,45 +35,6 @@ CameraHandle::CameraHandle(const std::string& camera_serial)
     port_ = 1;
     opened_ = false;
 
-    start(camera_serial);
-}
-
-void CameraHandle::open(const VRmDeviceKey* p_device_key,
-                        const VRmSTRING& p_device_str) {
-    if (p_device_key->m_busy) return;
-
-    std::cout << "Opening device: "
-              << p_device_key->mp_product_str
-              << " #" << p_device_str << std::endl;
-    identifier_ = std::string(p_device_str);
-    VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
-
-    opened_ = true;
-
-    //now get the first sensor port
-    VRmDWORD port = 0;
-    VRMEXECANDCHECK(VRmUsbCamGetSensorPortListEntry(device_, 0, &port));
-
-    //VRmPropId mode = VRM_PROPID_GRAB_MODE_FREERUNNING;
-    //VRMEXECANDCHECK(VRmUsbCamSetPropertyValueE(device_, VRM_PROPID_GRAB_MODE_E, &mode));
-
-    VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
-    //printColorFormats();
-
-    clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count() / 1000.0;
-    VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-
-    double timestamp = getCurrentTime();
-    // std::cout << "Timestamp: " << timestamp << std::endl;
-    // std::cout << std::setprecision(16)
-    //           << "Epoch    : " << clock_epoch_ << std::endl;
-
-    // start grabber at first
-    VRMEXECANDCHECK(VRmUsbCamStart(device_));
-}
-
-void CameraHandle::start(const std::string& camera_serial) {
     // uncomment this to enable logging features of VRmUsbCam (customer support)
     // VRmUsbCamEnableLogging();
 
@@ -102,6 +63,45 @@ void CameraHandle::start(const std::string& camera_serial) {
         std::cerr << "No suitable VRmagic device found!" << std::endl;
         exit(-1);
     }
+}
+
+void CameraHandle::open(const VRmDeviceKey* p_device_key,
+                        const VRmSTRING& p_device_str) {
+    std::cout << "Opening device: "
+              << p_device_key->mp_product_str
+              << " #" << p_device_str << std::endl;
+    identifier_ = std::string(p_device_str);
+
+    if (p_device_key->m_busy) {
+        std::cout << "Device " << identifier_ << " is BUSY" << std::endl;
+        return;
+    } 
+
+    VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
+
+    opened_ = true;
+
+    //now get the first sensor port
+    VRmDWORD port = 0;
+    VRMEXECANDCHECK(VRmUsbCamGetSensorPortListEntry(device_, 0, &port));
+
+    //VRmPropId mode = VRM_PROPID_GRAB_MODE_FREERUNNING;
+    //VRMEXECANDCHECK(VRmUsbCamSetPropertyValueE(device_, VRM_PROPID_GRAB_MODE_E, &mode));
+
+    VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
+    //printColorFormats();
+
+    clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count() / 1000.0;
+    VRMEXECANDCHECK(VRmUsbCamRestartTimer());
+
+    double timestamp = getCurrentTime();
+    // std::cout << "Timestamp: " << timestamp << std::endl;
+    // std::cout << std::setprecision(16)
+    //           << "Epoch    : " << clock_epoch_ << std::endl;
+
+    // start grabber at first
+    VRMEXECANDCHECK(VRmUsbCamStart(device_));
 }
 
 double CameraHandle::getCurrentTime() {

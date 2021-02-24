@@ -29,7 +29,6 @@ class CameraHandle {
  public:
     CameraHandle();
     CameraHandle(const std::string& camera_serial);
-    void start(const std::string& camera_serial);
     void open(const VRmDeviceKey* p_device_key,
               const VRmSTRING& p_device_str);
     void stop();

@@ -9,6 +9,7 @@
 #include <vrmagic_driftcam/api_handle.h>
 
 bool something_changed = false;
+bool enable_acquisition = false;
 
 // callback/event handling
 static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void* fp_user_data, const void* fcp_callback_params) {
@@ -42,13 +43,19 @@ static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void* fp_user_d
 
 bool startAcquisitionCb(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
 {
-    ROS_WARN("This is a dummy service");
+    if (!enable_acquisition) {
+        ROS_INFO("Starting acquisition");
+        enable_acquisition = true;
+    } 
     return true;
 }
 
 bool stopAcquisitionCb(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
 {
-    ROS_WARN("This is a dummy service");
+    if (enable_acquisition) {
+        ROS_INFO("Stopping acquisition");
+        enable_acquisition = false;
+    }
     return true;
 }
 
@@ -82,41 +89,43 @@ int main(int argc, char** argv) {
     }
     nhp.getParam("serial", cam_serial);
 
-    std::cout << "save_path" << save_path << std::endl;
-    std::cout << "serial" << cam_serial << std::endl;
-
-    // read libversion (for informational purposes only)
-    VRmDWORD libversion;
-    VRMEXECANDCHECK(VRmUsbCamGetVersion(&libversion));
-
-    std::cout << "========================================================\n";
-    std::cout << "===                 VRmagic Driftcam                 ===\n";
-    std::cout << "========================================================\n";
-    std::cout << "VRmUsbCam2 C API (v." << libversion << ")\n\n";
+    if (!nhp.hasParam("enable_acquisition")) {
+        ROS_INFO("No param named 'enable_acquisition'");
+        return -1;
+    }
+    nhp.getParam("enable_acquisition", enable_acquisition);
 
     int sp_timeout_ms = 1000;
 
-    Driftcam::ApiHandle api(cam_serial, save_path);
+    Driftcam::ApiHandle api(cam_serial, save_path, enable_acquisition);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
-    ros::Rate loop_rate(10);
-
-    int count = 0;
+    ros::Rate loop_rate(2);
     while(ros::ok()) {
-        VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
-        if (something_changed) {
-            api.update();
-            something_changed = false;
-        }
 
-        // api.trigger();
-        api.grab();
+        if (enable_acquisition) {
+
+            if (!api.isOpen()) {
+                api.open();
+            }
+
+            VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
+            if (something_changed) {
+                api.update();
+                something_changed = false;
+            }
+
+            // api.trigger();
+            api.grab();
+        } else {
+            if (api.isOpen()) {
+                api.close();
+            }
+            ROS_INFO("Waiting for start acquisition service call");
+        }
 
         ros::spinOnce();
         loop_rate.sleep();
-        
-        //std::this_thread::sleep_for(std::chrono::seconds(1));
-        count++;
     }
     return 0;
 }

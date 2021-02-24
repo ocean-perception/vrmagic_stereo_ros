@@ -3,11 +3,24 @@
 namespace Driftcam {
 class ApiHandle {
   public:
-    ApiHandle(const std::string& cam_serial, const std::string& cam_path);
+    ApiHandle(
+        const std::string& cam_serial, 
+        const std::string& cam_path, 
+        bool open_on_start);
     ~ApiHandle() {
+        close();
+    }
+    bool isOpen() {
+        return cam_.opened();
+    }
+    void open() {
+        if (!cam_.opened()) update();
+    }
+    void close() {
         if (cam_.opened()) {
             cam_.stop();
             cam_.close();
+            VRmUsbCamCleanup();
         }
     }
     void update();

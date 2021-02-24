@@ -11,10 +11,14 @@
 
 
 Driftcam::ApiHandle::ApiHandle(
-        const std::string& cam_serial, const std::string& cam_path) {
+        const std::string& cam_serial, 
+        const std::string& cam_path, 
+        bool open_on_start) {
     cam_serial_ = cam_serial;
     cam_path_ = cam_path;
-    update();
+    if (open_on_start) {
+        open();
+    }
 }
 
 void Driftcam::ApiHandle::update() {
@@ -32,6 +36,9 @@ void Driftcam::ApiHandle::update() {
             VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListEntry(i, &p_device_key));
             VRMEXECANDCHECK(VRmUsbCamGetSerialString(p_device_key, &p_device_str));
             if (std::strcmp(p_device_str, cam_serial_.c_str()) == 0) {
+                std::cout << "Found device: "
+                    << " \n\t Key:    " << p_device_key->m_serial
+                    << " \n\t Serial: " << p_device_str << std::endl;
                 if (!cam_.opened()) {
                     cam_.open(p_device_key, p_device_str);
                 }

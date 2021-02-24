@@ -1,11 +1,13 @@
 <launch>
-    <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="vrmagic_stereo_ros_QERQR5" output="screen">
+    <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="camera_QERQR5" output="screen">
         <param name="save_path" value="/media/driftcam/sdcard/data"/>
         <param name="serial" value="QERQR5"/>
+        <param name="enable_acquisition" value="true"/>
     </node>
 
-    <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="vrmagic_stereo_ros_FEQH45" output="screen">
+    <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="camera_FEQH45" output="screen">
         <param name="save_path" value="/media/driftcam/sdcard/data"/>
         <param name="serial" value="FEQH45"/>
+        <param name="enable_acquisition" value="true"/>
     </node>
 </launch>
