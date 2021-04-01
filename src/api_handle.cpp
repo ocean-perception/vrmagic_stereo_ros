@@ -9,37 +9,43 @@
 
 #include "vrmagic_driftcam/api_handle.h"
 
-
 Driftcam::ApiHandle::ApiHandle(
-        const std::string& cam_serial, 
-        const std::string& cam_path, 
-        bool open_on_start) {
+    const std::string &cam_serial,
+    const std::string &cam_path,
+    bool open_on_start)
+{
     cam_serial_ = cam_serial;
     cam_path_ = cam_path;
-    if (open_on_start) {
+    if (open_on_start)
+    {
         open();
     }
 }
 
-void Driftcam::ApiHandle::update() {
+void Driftcam::ApiHandle::update()
+{
     // check for connected devices
     VRmDWORD size;
     VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListSize(&size));
-    if (size > 0) {
+    if (size > 0)
+    {
 
-        VRmDeviceKey* p_device_key;
+        VRmDeviceKey *p_device_key;
         VRmSTRING p_device_str;
 
         bool cam_found = false;
 
-        for (VRmDWORD i = 0; i < size; ++i) {
+        for (VRmDWORD i = 0; i < size; ++i)
+        {
             VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListEntry(i, &p_device_key));
             VRMEXECANDCHECK(VRmUsbCamGetSerialString(p_device_key, &p_device_str));
-            if (std::strcmp(p_device_str, cam_serial_.c_str()) == 0) {
+            if (std::strcmp(p_device_str, cam_serial_.c_str()) == 0)
+            {
                 std::cout << "Found device: "
-                    << " \n\t Key:    " << p_device_key->m_serial
-                    << " \n\t Serial: " << p_device_str << std::endl;
-                if (!cam_.opened()) {
+                          << " \n\t Key:    " << p_device_key->m_serial
+                          << " \n\t Serial: " << p_device_str << std::endl;
+                if (!cam_.opened())
+                {
                     cam_.open(p_device_key, p_device_str);
                 }
                 cam_.setPath(cam_path_);
@@ -49,12 +55,14 @@ void Driftcam::ApiHandle::update() {
             VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
         }
 
-        if (!cam_found && cam_.opened()) {
+        if (!cam_found && cam_.opened())
+        {
             std::cout << "Camera " << cam_serial_ << " disconnected" << std::endl;
             cam_.disconnected();
         }
-    } else {
+    }
+    else
+    {
         std::cout << "No " << cam_serial_ << " device found" << std::endl;
     }
 }
-
