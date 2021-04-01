@@ -40,7 +40,10 @@ namespace Driftcam
         opened_ = false;
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        // VRmUsbCamEnableLogging();
+        std::string logfile_str = "/tmp/vrcamera_" + camera_serial + ".log";
+        VRmSTRING logfile = logfile_str.c_str();
+        std::cout << "Logfile is: " << logfile << std::endl;
+	VRmUsbCamEnableLoggingEx(logfile);
 
         // check for connected devices
         VRmDWORD size = 0;
@@ -86,6 +89,13 @@ namespace Driftcam
             std::cout << "Device " << identifier_ << " is BUSY" << std::endl;
             return;
         }
+
+
+        // uncomment this to enable logging features of VRmUsbCam (customer support)
+        std::string logfile_str = "/tmp/vrcamera_" + identifier_ + ".log";
+        VRmSTRING logfile = logfile_str.c_str();
+        std::cout << "Logfile is: " << logfile << std::endl;
+	VRmUsbCamEnableLoggingEx(logfile);
 
         VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
 
@@ -153,7 +163,7 @@ namespace Driftcam
             usleep(500);
         }
 
-        int timeout_ms = 3000;
+        int timeout_ms = 0;  // Dangerous!
         bool images_available = false;
 
         // lock next (raw) image for read access, convert it to the desired

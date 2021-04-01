@@ -153,6 +153,7 @@ int main(int argc, char **argv)
         ros::spinOnce();
         //loop_rate.sleep();
     }
+    api.close();
     VRmUsbCamCleanup();
     ros::shutdown();
     return 0;
