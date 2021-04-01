@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <thread>
+#include <signal.h>
 
 #include <ros/ros.h>
 #include <std_srvs/Empty.h>
