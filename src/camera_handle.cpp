@@ -92,10 +92,10 @@ namespace Driftcam
         }
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        std::string logfile_str = "/tmp/vrcamera_" + identifier_ + ".log";
-        VRmSTRING logfile = logfile_str.c_str();
-        std::cout << "Logfile is: " << logfile << std::endl;
-        VRmUsbCamEnableLoggingEx(logfile);
+        //std::string logfile_str = "/tmp/vrcamera_" + identifier_ + ".log";
+        //VRmSTRING logfile = logfile_str.c_str();
+        //std::cout << "Logfile is: " << logfile << std::endl;
+        //VRmUsbCamEnableLoggingEx(logfile);
 
         VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
 
@@ -240,18 +240,8 @@ namespace Driftcam
                       << error_string << std::endl;
             opened_ = false;
         }
-
-        if (frames_dropped > 0)
-        {
-            std::cout << "[" << device_ << "] "
-                      << "Detected dropped frames." << std::endl;
-            std::cout << "[" << device_ << "] "
-                      << "Stopping device..." << std::endl;
-            VRMEXECANDCHECK(VRmUsbCamStop(device_));
-            std::cout << "[" << device_ << "] "
-                      << "Closing device..." << std::endl;
-            VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
-        }
+	stop();
+        close();
     }
 
     bool CameraHandle::setPropertyPort()
