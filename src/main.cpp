@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <thread>
+#include <signal.h>
 
 #include <ros/ros.h>
 #include <std_srvs/Empty.h>
@@ -152,6 +153,7 @@ int main(int argc, char **argv)
         ros::spinOnce();
         //loop_rate.sleep();
     }
+    api.close();
     VRmUsbCamCleanup();
     ros::shutdown();
     return 0;

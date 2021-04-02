@@ -28,7 +28,6 @@ namespace Driftcam
             {
                 cam_.stop();
                 cam_.close();
-                VRmUsbCamCleanup();
             }
         }
         void update();
