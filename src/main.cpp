@@ -122,12 +122,14 @@ int main(int argc, char **argv)
 
         if (enable_acquisition)
         {
-            /*
+
             if (!api.isOpen())
             {
+                std::cout << "Reopening device " << cam_serial << std::endl;
                 api.open();
             }
 
+            /*
             VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
             if (something_changed)
             {
@@ -137,7 +139,7 @@ int main(int argc, char **argv)
             */
 
             // api.trigger();
-	    std::cout << "API Grabbing" << std::endl;
+            std::cout << "API Grabbing" << std::endl;
             api.grab();
         }
         /*

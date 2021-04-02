@@ -84,8 +84,6 @@ namespace Driftcam
                   << " #" << p_device_str << std::endl;
         identifier_ = std::string(p_device_str);
 
-        p_device_key_ = const_cast<VRmDeviceKey *>(p_device_key);
-
         if (p_device_key->m_busy)
         {
             std::cout << "Device " << identifier_ << " is BUSY" << std::endl;
@@ -253,44 +251,6 @@ namespace Driftcam
             std::cout << "[" << device_ << "] "
                       << "Closing device..." << std::endl;
             VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
-
-            std::cout << "[" << device_ << "] "
-                      << "Searching for device..." << std::endl;
-            VRmDeviceKey *p_device_key;
-            VRmSTRING p_device_str;
-            for (VRmDWORD i = 0; i < size && !device_; ++i)
-            {
-                VRMEXECANDCHECK(VRmUsbCamGetDeviceKeyListEntry(i, &p_device_key));
-                VRMEXECANDCHECK(VRmUsbCamGetSerialString(p_device_key, &p_device_str));
-                if (std::strcmp(p_device_str, identifier_.c_str()) == 0)
-                {
-                    std::cout << "[" << device_ << "] "
-                              << "Device found..." << std::endl;
-
-                    while (p_device_key->m_busy)
-                    {
-                        std::cout << "[" << device_ << "] "
-                                  << "Device is busy..." << std::endl;
-                        usleep(1000000);
-                    }
-
-                    VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
-                    std::cout << "[" << device_ << "] "
-                              << "Resetting frame counter..." << std::endl;
-                    VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
-                    std::cout << "[" << device_ << "] "
-                              << "Restarting timer..." << std::endl;
-                    clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-                                       std::chrono::system_clock::now().time_since_epoch())
-                                       .count() /
-                                   1000.0;
-                    VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-                    std::cout << "[" << device_ << "] "
-                              << "Starting device..." << std::endl;
-                    VRMEXECANDCHECK(VRmUsbCamStart(device_));
-                }
-                VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));
-            }
         }
     }
 
