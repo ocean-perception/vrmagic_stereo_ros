@@ -67,7 +67,6 @@ namespace Driftcam
         bool setPropertyPort();
         bool verifyFrameRate();
         bool opened_;
-        VRmDeviceKey *p_device_key_;
     }; // class CameraHandle
 
 } // namespace Driftcam
