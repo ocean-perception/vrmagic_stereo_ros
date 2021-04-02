@@ -146,6 +146,7 @@ namespace Driftcam
     {
         std::cout << "Closing camera..." << std::endl;
         VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
+        opened_ = false;
     }
 
     void CameraHandle::trigger()
