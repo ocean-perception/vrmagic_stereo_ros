@@ -40,7 +40,7 @@ namespace Driftcam
         opened_ = false;
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        // VRmUsbCamEnableLogging();
+        VRmUsbCamEnableLogging();
 
         // check for connected devices
         VRmDWORD size = 0;
@@ -80,6 +80,8 @@ namespace Driftcam
                   << p_device_key->mp_product_str
                   << " #" << p_device_str << std::endl;
         identifier_ = std::string(p_device_str);
+
+        *p_device_key_ = *p_device_key;
 
         if (p_device_key->m_busy)
         {
@@ -165,7 +167,7 @@ namespace Driftcam
                                                      &p_source_img,
                                                      &frames_dropped,
                                                      timeout_ms);
-        if (images_available)
+        if (images_available && frames_dropped == 0)
         {
             // VRmUsbCamLockNextImageEx2() successfully returned an image
             // ----------------------------------------------------------
@@ -218,6 +220,19 @@ namespace Driftcam
             }
             VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_, &p_source_img));
             // VRMEXECANDCHECK(VRmUsbCamFreeImage(&p_target_img));
+        }
+        else if (frames_dropped > 0)
+        {
+            VRMEXECANDCHECK(VRmUsbCamStop(device_));
+            VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
+            VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key_, &device_));
+            VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
+            clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                               std::chrono::system_clock::now().time_since_epoch())
+                               .count() /
+                           1000.0;
+            VRMEXECANDCHECK(VRmUsbCamRestartTimer());
+            VRMEXECANDCHECK(VRmUsbCamStart(device_));
         }
         else
         {
