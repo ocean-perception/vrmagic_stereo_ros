@@ -84,12 +84,13 @@ namespace Driftcam
                   << " #" << p_device_str << std::endl;
         identifier_ = std::string(p_device_str);
 
-        *p_device_key_ = *p_device_key;
+        p_device_key_ = const_cast<VRmDeviceKey*>(p_device_key);
 
         if (p_device_key->m_busy)
         {
             std::cout << "Device " << identifier_ << " is BUSY" << std::endl;
-            return;
+	    // do not return?
+            // return;
         }
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
@@ -161,16 +162,17 @@ namespace Driftcam
         while (!ready)
         {
             VRmUsbCamIsNextImageReadyEx(device_, port_, &ready);
-            usleep(500);
+            usleep(50000);
         }
 
-        int timeout_ms = 0; // Dangerous!
+        int timeout_ms = 500;
         bool images_available = false;
 
         // lock next (raw) image for read access, convert it to the desired
         // format and unlock it again, so that grabbing can go on
         VRmImage *p_source_img = 0;
         VRmDWORD frames_dropped = 0;
+        std::cout << "Locking grabber until image" << std::endl;
         images_available = VRmUsbCamLockNextImageEx2(device_,
                                                      port_,
                                                      &p_source_img,
@@ -191,10 +193,10 @@ namespace Driftcam
             //VRMEXECANDCHECK(VRmUsbCamCopyImage(&p_target_img, p_source_img));
 
             /*
-        VRmDWORD frame_counter;
-        VRMEXECANDCHECK(VRmUsbCamGetFrameCounter(p_source_img,
+            VRmDWORD frame_counter;
+            VRMEXECANDCHECK(VRmUsbCamGetFrameCounter(p_source_img,
                                                  &frame_counter));
-        */
+            */
 
             // see, if we had to drop some frames due to data transfer stalls.
             // if so, output a message
@@ -230,19 +232,6 @@ namespace Driftcam
             VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_, &p_source_img));
             // VRMEXECANDCHECK(VRmUsbCamFreeImage(&p_target_img));
         }
-        else if (frames_dropped > 0)
-        {
-            VRMEXECANDCHECK(VRmUsbCamStop(device_));
-            VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
-            VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key_, &device_));
-            VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
-            clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
-                               std::chrono::system_clock::now().time_since_epoch())
-                               .count() /
-                           1000.0;
-            VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-            VRMEXECANDCHECK(VRmUsbCamStart(device_));
-        }
         else
         {
             // VRmUsbCamLockNextImageEx2() did not return an image. why?
@@ -251,6 +240,26 @@ namespace Driftcam
             std::cerr << "VRmUsbCamLockNextImageEx2() failed with "
                       << error_string << std::endl;
             opened_ = false;
+        }
+        
+        if (frames_dropped > 0)
+        {
+	    std::cout << "Detected dropped frames. Stopping device..." << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamStop(device_));
+	    std::cout << "Detected dropped frames. Closing device..." << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
+	    std::cout << "Detected dropped frames. Opening device..." << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key_, &device_));
+	    std::cout << "Detected dropped frames. Resetting frame counter..." << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
+	    std::cout << "Detected dropped frames. Restarting timer..." << std::endl;
+            clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
+                               std::chrono::system_clock::now().time_since_epoch())
+                               .count() /
+                           1000.0;
+            VRMEXECANDCHECK(VRmUsbCamRestartTimer());
+	    std::cout << "Detected dropped frames. Starting device..." << std::endl;
+            VRMEXECANDCHECK(VRmUsbCamStart(device_));
         }
     }
 

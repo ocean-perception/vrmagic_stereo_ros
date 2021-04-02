@@ -137,6 +137,7 @@ int main(int argc, char **argv)
             */
 
             // api.trigger();
+	    std::cout << "API Grabbing" << std::endl;
             api.grab();
         }
         /*
