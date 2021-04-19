@@ -12,10 +12,10 @@
 bool something_changed = false;
 bool enable_acquisition = false;
 
-static sig_atomic_t volatile g_request_shutdown = 0;
+//static sig_atomic_t volatile g_request_shutdown = 0;
 
 // Replacement SIGINT handler
-static void mySigIntHandler(int sig) { g_request_shutdown = 1; }
+//static void mySigIntHandler(int sig) { g_request_shutdown = 1; }
 
 // callback/event handling
 static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_data, const void *fcp_callback_params)
@@ -76,8 +76,8 @@ int main(int argc, char **argv)
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
     atexit(VRmUsbCamCleanup);
-    signal(SIGINT, mySigIntHandler);
-    signal(SIGSEGV, mySigIntHandler);
+    //signal(SIGINT, mySigIntHandler);
+    //signal(SIGSEGV, mySigIntHandler);
 
     // Init ROS node
     ros::init(argc, argv, "vrmagic_stereo_ros", ros::init_options::NoSigintHandler);
@@ -117,7 +117,8 @@ int main(int argc, char **argv)
     //VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
     //ros::Rate loop_rate(2);
-    while (!g_request_shutdown)
+    //while (!g_request_shutdown)
+    while (ros::ok())
     {
 
         if (enable_acquisition)
