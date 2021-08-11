@@ -24,13 +24,11 @@ class ApiHandle {
             VRmUsbCamCleanup();
         }
     }
-    void update();
-    void grab() {
-        if (cam_.opened()) cam_.grab();
-    }
 
-    void trigger() {
-        if (cam_.opened()) cam_.trigger();
+    void trigger()
+    {
+        if (cam_.opened())
+            cam_.trigger();
     }
 
   private:
@@ -41,3 +39,4 @@ class ApiHandle {
     Driftcam::CameraHandle cam_;
 };
 }
+
