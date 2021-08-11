@@ -81,6 +81,8 @@ void CameraHandle::open(const VRmDeviceKey* p_device_key,
 
     opened_ = true;
 
+    std::cout << "Device " << identifier_ << " opened successfully!" << std::endl;
+
     //now get the first sensor port
     VRmDWORD port = 0;
     VRMEXECANDCHECK(VRmUsbCamGetSensorPortListEntry(device_, 0, &port));

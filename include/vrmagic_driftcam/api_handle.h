@@ -6,6 +6,7 @@ class ApiHandle {
     ApiHandle(
         const std::string& cam_serial, 
         const std::string& cam_path, 
+        const std::string& mission_name, 
         bool open_on_start);
     ~ApiHandle() {
         close();
@@ -36,6 +37,7 @@ class ApiHandle {
     void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void* fp_user_data, const void* fcp_callback_params);
     std::string cam_serial_;
     std::string cam_path_;
+    std::string mission_name_;
     Driftcam::CameraHandle cam_;
 };
 }

@@ -81,6 +81,12 @@ int main(int argc, char** argv) {
         return -1;
     }
     nhp.getParam("save_path", save_path);
+    
+    if (!nh.hasParam("name")) {
+        ROS_INFO("No param named 'name'");
+        return -1;
+    std::string mission_name;
+    nh.getParam("name", mission_name)
 
     std::string cam_serial("QERQR5");
     if (!nhp.hasParam("serial")) {
@@ -97,7 +103,7 @@ int main(int argc, char** argv) {
 
     int sp_timeout_ms = 1000;
 
-    Driftcam::ApiHandle api(cam_serial, save_path, enable_acquisition);
+    Driftcam::ApiHandle api(cam_serial, save_path, mission_name, enable_acquisition);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
     ros::Rate loop_rate(2);
