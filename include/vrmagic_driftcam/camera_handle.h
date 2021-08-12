@@ -38,7 +38,7 @@ namespace Driftcam
                   const VRmSTRING &p_device_str);
         void stop();
         void close();
-        void grab();
+        int grab();
         void trigger();
         double getCurrentTime();
         float getExposure();

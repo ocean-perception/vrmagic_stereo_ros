@@ -10,18 +10,22 @@
 #include "vrmagic_driftcam/api_handle.h"
 
 Driftcam::ApiHandle::ApiHandle(
-        const std::string& cam_serial, 
-        const std::string& cam_path, 
-        const std::string& mission_name, 
-        bool open_on_start) {
+    const std::string &cam_serial,
+    const std::string &cam_path,
+    bool open_on_start)
+{
     cam_serial_ = cam_serial;
     cam_path_ = cam_path;
-    mission_name__ = mission_name_;
-    if (open_on_start) {
+    if (open_on_start)
+    {
         open();
     }
 }
 
+/**
+ * @brief Update the API handle with the latest camera settings.
+ *
+ */
 void Driftcam::ApiHandle::update()
 {
     // check for connected devices
@@ -48,7 +52,7 @@ void Driftcam::ApiHandle::update()
                 {
                     cam_.open(p_device_key, p_device_str);
                 }
-                cam_.setPath(cam_path_ + "/" + mission_name_ + "/" + cam_serial_);
+                cam_.setPath(cam_path_ + "/" + folder_name_ + "/" + cam_serial_);
                 //cam_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
                 cam_found = true;
             }

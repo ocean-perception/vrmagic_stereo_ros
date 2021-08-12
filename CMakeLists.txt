@@ -9,17 +9,28 @@ set(VRMAGICUSB2_INCLUDE_DIRS "external/VRmUsbCamSDK/include external/VRmUsbCamSD
 find_package(catkin REQUIRED COMPONENTS
   # ROS Dependencies
   roscpp
+  std_msgs
   std_srvs
+  message_generation
 )
 
 find_package(Boost REQUIRED system)
+
+add_service_files(
+  DIRECTORY srv
+  FILES StartAcquisition.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 # Declare things to be passed to dependent projects
 catkin_package(
    INCLUDE_DIRS include
    CATKIN_DEPENDS roscpp
 )
-
 
 include_directories(
   include
@@ -29,9 +40,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-
 add_library(
-  vrmusbcamcpp 
+  vrmusbcamcpp
   external/VRmUsbCamSDK/wrappers/c++/vrmusbcamcpp.cpp
 )
 

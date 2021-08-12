@@ -5,17 +5,18 @@
 #include <signal.h>
 
 #include <ros/ros.h>
-#include <std_srvs/Empty.h>
+#include <vrmagic_driftcam/StartAcquisition.h>
 
 #include <vrmagic_driftcam/api_handle.h>
 
 bool something_changed = false;
 bool enable_acquisition = false;
+std::string folder_name = "undefined";
 
-//static sig_atomic_t volatile g_request_shutdown = 0;
+static sig_atomic_t volatile g_request_shutdown = 0;
 
 // Replacement SIGINT handler
-//static void mySigIntHandler(int sig) { g_request_shutdown = 1; }
+static void mySigIntHandler(int sig) { g_request_shutdown = 1; }
 
 // callback/event handling
 static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_data, const void *fcp_callback_params)
@@ -51,14 +52,16 @@ static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_d
     }
 }
 
-bool startAcquisitionCb(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response)
+bool startAcquisitionCb(vrmagic_driftcam::StartAcquisition::Request &request, vrmagic_driftcam::StartAcquisition::Response &response)
 {
     if (!enable_acquisition)
     {
         ROS_INFO("Starting acquisition");
         enable_acquisition = true;
+        folder_name = request.folder_name;
+        response.success = true;
     }
-    return true;
+    return response;
 }
 
 bool stopAcquisitionCb(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response)
@@ -76,8 +79,8 @@ int main(int argc, char **argv)
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
     atexit(VRmUsbCamCleanup);
-    //signal(SIGINT, mySigIntHandler);
-    //signal(SIGSEGV, mySigIntHandler);
+    signal(SIGINT, mySigIntHandler);
+    signal(SIGSEGV, mySigIntHandler);
 
     // Init ROS node
     ros::init(argc, argv, "vrmagic_stereo_ros", ros::init_options::NoSigintHandler);
@@ -85,8 +88,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nhp("~");
 
     // Provide a start and stop service
-    ros::ServiceServer start_acquisition_srv = nhp.advertiseService("start_acquisition", startAcquisitionCb);
-    ros::ServiceServer stop_acquisition_srv = nhp.advertiseService("stop_acquisition", stopAcquisitionCb);
+    ros::ServiceServer start_acquisition_srv = nhp.advertiseService<vrmagic_driftcam::StartAcquisition>("start_acquisition", startAcquisitionCb);
+    ros::ServiceServer stop_acquisition_srv = nhp.advertiseService<std_srvs::Empty>("stop_acquisition", stopAcquisitionCb);
 
     // Read the save path from the launchfile
     std::string save_path;
@@ -96,13 +99,7 @@ int main(int argc, char **argv)
         ROS_INFO("No param named 'save_path'");
         return -1;
     }
-    nhp.getParam("save_path", save_path);
-    
-    if (!nh.hasParam("name")) {
-        ROS_INFO("No param named 'name'");
-        return -1;
-    std::string mission_name;
-    nh.getParam("name", mission_name)
+    nhp.getParamCached("save_path", save_path);
 
     std::string cam_serial("QERQR5");
     if (!nhp.hasParam("serial"))
@@ -119,16 +116,11 @@ int main(int argc, char **argv)
     }
     nhp.getParam("enable_acquisition", enable_acquisition);
 
-    int sp_timeout_ms = 1000;
-
     Driftcam::ApiHandle api(cam_serial, save_path, mission_name, enable_acquisition);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
-    //ros::Rate loop_rate(2);
-    //while (!g_request_shutdown)
-    while (ros::ok())
+    while (ros::ok() && g_request_shutdown == 0)
     {
-
         if (enable_acquisition)
         {
 
@@ -137,33 +129,11 @@ int main(int argc, char **argv)
                 std::cout << "Reopening device " << cam_serial << std::endl;
                 api.open();
             }
-
-            /*
-            VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
-            if (something_changed)
-            {
-                api.update();
-                something_changed = false;
-            }
-            */
-
-            // api.trigger();
             std::cout << "API Grabbing" << std::endl;
-            api.grab();
+            api.setFoldername(folder_name);
+            int images_available = api.grab();
         }
-        /*
-        else
-        {
-            if (api.isOpen())
-            {
-                api.close();
-            }
-            ROS_INFO("Waiting for start acquisition service call");
-        }
-        */
-
         ros::spinOnce();
-        //loop_rate.sleep();
     }
     api.close();
     VRmUsbCamCleanup();
