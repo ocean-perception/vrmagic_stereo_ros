@@ -44,10 +44,12 @@ check_acquisition () {
 	echo "Current  image count $CAM_A: $COUNT_A, $CAM_B: $COUNT_B"
 
 	if (( $COUNT_A <= $COUNT_A_PREV )) || (( $COUNT_B <= $COUNT_B_PREV )); then
-		echo "Image count is NOT increasing. Rebooting in 10s..."
+		echo "Image count is NOT increasing. Relaunching in 5s..."
 		mkdir -p $(dirname RESTARTS_LOG_PATH)
 		echo $(date '+%Y%m%d_%H%M%S') >> $RESTARTS_LOG_PATH
-		sleep 10
+		sleep 5
+                rosnode kill /camera_FEQH45
+                rosnode kill /camera_QERQR5
 		# sudo reboot
 	else
 		echo "Image count IS increasing. Carry on."
