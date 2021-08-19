@@ -27,6 +27,22 @@ void removeWatchmanFile()
         boost::filesystem::remove(wf);
 }
 
+bool watchmanFileExists() 
+{
+    boost::filesystem::path wf(watchman_folder + "/path.txt");
+    return boost::filesystem::is_regular_file(wf);
+}
+
+
+void mySigintHandler(int sig)
+{
+    ROS_INFO("Cleaning up...");
+    removeWatchmanFile();
+    //api.close();
+    VRmUsbCamCleanup();
+    ros::shutdown();
+}
+
 void createWatchmanFile(const std::string& folder_name) 
 {
     std::ofstream myfile;
@@ -43,6 +59,8 @@ bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, 
     {
         ROS_INFO("Starting acquisition");
         folder_name = request.folder_name;
+        ros::NodeHandle nh;
+        nh.setParam("/driftcam/save_image_dir", folder_name);
         createWatchmanFile(folder_name);
         enable_acquisition = true;
         response.success = true;
@@ -66,7 +84,9 @@ int main(int argc, char **argv)
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
     atexit(VRmUsbCamCleanup);
-
+ 
+    signal(SIGINT, mySigintHandler);
+   
     // Init ROS node
     ros::init(argc, argv, "vrmagic_stereo_ros", ros::init_options::NoSigintHandler);
     ros::NodeHandle nh;
@@ -101,6 +121,11 @@ int main(int argc, char **argv)
     }
     nhp.getParam("enable_acquisition", enable_acquisition);
 
+    if (watchmanFileExists()) {
+        enable_acquisition = true;
+        nh.getParam("/driftcam/save_image_dir", folder_name);
+    }
+
     Driftcam::ApiHandle api(cam_serial, save_path, enable_acquisition);
 
     while (ros::ok())
@@ -119,8 +144,5 @@ int main(int argc, char **argv)
         }
         ros::spinOnce();
     }
-    api.close();
-    VRmUsbCamCleanup();
-    ros::shutdown();
     return 0;
 }
