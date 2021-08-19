@@ -41,15 +41,14 @@ void Driftcam::ApiHandle::update()
             VRMEXECANDCHECK(VRmUsbCamGetSerialString(p_device_key, &p_device_str));
             if (std::strcmp(p_device_str, cam_serial_.c_str()) == 0)
             {
-                std::cout << "Found device: "
+                /*std::cout << "Found device: "
                           << " \n\t Key:    " << p_device_key->m_serial
-                          << " \n\t Serial: " << p_device_str << std::endl;
+                          << " \n\t Serial: " << p_device_str << std::endl;*/
                 if (!cam_.opened())
                 {
                     cam_.open(p_device_key, p_device_str);
                 }
                 cam_.setPath(cam_path_ + "/" + folder_name_ + "/" + cam_serial_);
-                //cam_.setTriggerMode(Driftcam::TRIG_EXTERNAL);
                 cam_found = true;
             }
             VRMEXECANDCHECK(VRmUsbCamFreeDeviceKey(&p_device_key));

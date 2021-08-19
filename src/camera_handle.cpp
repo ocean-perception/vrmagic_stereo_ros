@@ -40,10 +40,10 @@ namespace Driftcam
         opened_ = false;
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        std::string logfile_str = "/tmp/vrcamera_" + camera_serial + ".log";
-        VRmSTRING logfile = logfile_str.c_str();
-        std::cout << "Logfile is: " << logfile << std::endl;
-        VRmUsbCamEnableLoggingEx(logfile);
+        //std::string logfile_str = "/media/driftcam/sdcard/log/vrcamera_" + camera_serial + ".log";
+        //VRmSTRING logfile = logfile_str.c_str();
+        //std::cout << "Logfile is: " << logfile << std::endl;
+        //VRmUsbCamEnableLoggingEx(logfile);
 
         // check for connected devices
         VRmDWORD size = 0;
@@ -79,9 +79,9 @@ namespace Driftcam
     void CameraHandle::open(const VRmDeviceKey *p_device_key,
                             const VRmSTRING &p_device_str)
     {
-        std::cout << "Opening device: "
+        /*std::cout << "Opening device: "
                   << p_device_key->mp_product_str
-                  << " #" << p_device_str << std::endl;
+                  << " #" << p_device_str << std::endl;*/
         identifier_ = std::string(p_device_str);
 
         if (p_device_key->m_busy)
@@ -92,36 +92,22 @@ namespace Driftcam
         }
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        //std::string logfile_str = "/tmp/vrcamera_" + identifier_ + ".log";
-        //VRmSTRING logfile = logfile_str.c_str();
-        //std::cout << "Logfile is: " << logfile << std::endl;
-        //VRmUsbCamEnableLoggingEx(logfile);
+        // std::string logfile_str = "/media/driftcam/sdcard/log/vrcamera_" + camera_serial + ".log";
+        // VRmSTRING logfile = logfile_str.c_str();
+        // std::cout << "Logfile is: " << logfile << std::endl;
+        // VRmUsbCamEnableLoggingEx(logfile);
 
         VRMEXECANDCHECK(VRmUsbCamOpenDevice(p_device_key, &device_));
 
         opened_ = true;
 
-        //now get the first sensor port
-        //VRmDWORD port = 0;
-        //VRMEXECANDCHECK(VRmUsbCamGetSensorPortListEntry(device_, 0, &port));
-
-        //VRmPropId mode = VRM_PROPID_GRAB_MODE_FREERUNNING;
-        //VRMEXECANDCHECK(VRmUsbCamSetPropertyValueE(device_, VRM_PROPID_GRAB_MODE_E, &mode));
-
         VRMEXECANDCHECK(VRmUsbCamResetFrameCounter(device_));
-        //printColorFormats();
 
         clock_epoch_ = std::chrono::duration_cast<std::chrono::milliseconds>(
                            std::chrono::system_clock::now().time_since_epoch())
                            .count() /
                        1000.0;
         VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-
-        double timestamp = getCurrentTime();
-        // std::cout << "Timestamp: " << timestamp << std::endl;
-        // std::cout << std::setprecision(16)
-        //           << "Epoch    : " << clock_epoch_ << std::endl;
-
         // start grabber at first
         VRMEXECANDCHECK(VRmUsbCamStart(device_));
     }
@@ -136,13 +122,13 @@ namespace Driftcam
     void CameraHandle::stop()
     {
         // ...and the device
-        std::cout << "Stopping camera..." << std::endl;
+        //std::cout << "Stopping camera..." << std::endl;
         VRMEXECANDCHECK(VRmUsbCamStop(device_));
     }
 
     void CameraHandle::close()
     {
-        std::cout << "Closing camera..." << std::endl;
+        //std::cout << "Closing camera..." << std::endl;
         VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
         opened_ = false;
     }
@@ -171,7 +157,7 @@ namespace Driftcam
         // format and unlock it again, so that grabbing can go on
         VRmImage *p_source_img = 0;
         VRmDWORD frames_dropped = 0;
-        std::cout << "Locking grabber until image" << std::endl;
+        //std::cout << "Locking grabber until image" << std::endl;
         images_available = VRmUsbCamLockNextImageEx2(device_,
                                                      port_,
                                                      &p_source_img,
@@ -180,23 +166,6 @@ namespace Driftcam
         if (images_available && frames_dropped == 0)
         {
             // VRmUsbCamLockNextImageEx2() successfully returned an image
-            // ----------------------------------------------------------
-            // VRmDWORD img_sensorport;
-            // VRmUsbCamGetImageSensorPort(p_source_img, &img_sensorport);
-
-            // VRmImageFormat target_format = image_formats_[img_sensorport-1];
-
-            //VRmImage* p_target_img = 0;
-
-            // Copy image
-            //VRMEXECANDCHECK(VRmUsbCamCopyImage(&p_target_img, p_source_img));
-
-            /*
-            VRmDWORD frame_counter;
-            VRMEXECANDCHECK(VRmUsbCamGetFrameCounter(p_source_img,
-                                                 &frame_counter));
-            */
-
             // see, if we had to drop some frames due to data transfer stalls.
             // if so, output a message
             if (frames_dropped)
@@ -206,15 +175,6 @@ namespace Driftcam
             }
             else
             {
-                // Make cv::Mat header for the recieved image (This does not copy
-                // data, hence the use of Clone() later)
-                // cv::Size img_size(p_target_img->m_image_format.m_width,
-                //                p_target_img->m_image_format.m_height);
-                // cv::Mat img = cv::Mat(img_size,
-                //                    CV_8UC1,
-                //                    p_target_img->mp_buffer,
-                //                    cv::Mat::AUTO_STEP);
-
                 /// Save a VRmImage to a PNG file. Compression level 0 is
                 // uncompressed, max. is 9, use default with -1.
                 int compression_level = 0;
@@ -229,7 +189,6 @@ namespace Driftcam
                                                  compression_level));
             }
             VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_, &p_source_img));
-            // VRMEXECANDCHECK(VRmUsbCamFreeImage(&p_target_img));
         }
         else
         {

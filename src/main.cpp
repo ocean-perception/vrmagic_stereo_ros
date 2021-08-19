@@ -1,8 +1,12 @@
 // Copyright (c) 2018 University of Southampton
 
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <signal.h>
+
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <ros/ros.h>
 #include <std_srvs/Empty.h>
@@ -13,44 +17,23 @@
 bool something_changed = false;
 bool enable_acquisition = false;
 std::string folder_name = "undefined";
+std::string watchman_folder = "/media/driftcam/sdcard/watchman";
+std::string data_folder = "/media/driftcam/sdcard/data/";
 
-//static sig_atomic_t volatile g_request_shutdown = 0;
-
-// Replacement SIGINT handler
-//static void mySigIntHandler(int sig) { g_request_shutdown = 1; }
-
-// callback/event handling
-static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_data, const void *fcp_callback_params)
+void removeWatchmanFile() 
 {
-    switch (f_type)
-    {
-    case VRM_STATIC_CALLBACK_TYPE_DEVICE_CHANGE:
-        if (fcp_callback_params)
-        {
-            VRmDeviceChangeType l_type = *reinterpret_cast<const VRmDeviceChangeType *>(fcp_callback_params);
-            switch (l_type)
-            {
-            case VRM_DEVICE_CHANGE_TYPE_ARRIVAL:
-                std::cout << "VRM_DEVICE_CHANGE_TYPE_ARRIVAL" << std::endl;
-                something_changed = true;
-                break;
-            case VRM_DEVICE_CHANGE_TYPE_REMOVECOMPLETE:
-                std::cout << "VRM_DEVICE_CHANGE_TYPE_REMOVECOMPLETE" << std::endl;
-                something_changed = true;
-                break;
-            case VRM_DEVICE_CHANGE_TYPE_BUSY:
-                std::cout << "VRM_DEVICE_CHANGE_TYPE_BUSY" << std::endl;
-                break;
-            default:
-                std::cout << "Unknown device change type" << std::endl;
-                break;
-            }
-        }
-        break;
-    default:
-        std::cout << "Unknown callback type" << std::endl;
-        break;
-    }
+    boost::filesystem::path wf(watchman_folder + "/path.txt");
+    if (boost::filesystem::is_regular_file(wf))
+        boost::filesystem::remove(wf);
+}
+
+void createWatchmanFile(const std::string& folder_name) 
+{
+    std::ofstream myfile;
+    myfile.open(watchman_folder + "/path.txt");
+    myfile << data_folder << folder_name << "\nFEQH45\nQERQR5";
+    myfile.close();
+
 }
 
 bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, vrmagic_stereo_ros::StartAcquisition::Response &response)
@@ -59,8 +42,9 @@ bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, 
     if (!enable_acquisition)
     {
         ROS_INFO("Starting acquisition");
-        enable_acquisition = true;
         folder_name = request.folder_name;
+        createWatchmanFile(folder_name);
+        enable_acquisition = true;
         response.success = true;
     }
     return true;
@@ -71,6 +55,7 @@ bool stopAcquisitionCb(std_srvs::Empty::Request &request, std_srvs::Empty::Respo
     if (enable_acquisition)
     {
         ROS_INFO("Stopping acquisition");
+        removeWatchmanFile();
         enable_acquisition = false;
     }
     return true;
@@ -81,8 +66,6 @@ int main(int argc, char **argv)
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
     atexit(VRmUsbCamCleanup);
-    //signal(SIGINT, mySigIntHandler);
-    //signal(SIGSEGV, mySigIntHandler);
 
     // Init ROS node
     ros::init(argc, argv, "vrmagic_stereo_ros", ros::init_options::NoSigintHandler);
@@ -119,10 +102,7 @@ int main(int argc, char **argv)
     nhp.getParam("enable_acquisition", enable_acquisition);
 
     Driftcam::ApiHandle api(cam_serial, save_path, enable_acquisition);
-    //VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
-    //ros::Rate loop_rate(2);
-    //while (!g_request_shutdown)
     while (ros::ok())
     {
 
@@ -131,37 +111,13 @@ int main(int argc, char **argv)
 
             if (!api.isOpen())
             {
-                std::cout << "Reopening device " << cam_serial << std::endl;
                 api.open();
             }
 
-            /*
-            VRMEXECANDCHECK(VRmUsbCamUpdateDeviceKeyList());
-            if (something_changed)
-            {
-                api.update();
-                something_changed = false;
-            }
-            */
-
-            // api.trigger();
-            std::cout << "API Grabbing" << std::endl;
             api.setFoldername(folder_name);
             api.grab();
         }
-        /*
-        else
-        {
-            if (api.isOpen())
-            {
-                api.close();
-            }
-            ROS_INFO("Waiting for start acquisition service call");
-        }
-        */
-
         ros::spinOnce();
-        //loop_rate.sleep();
     }
     api.close();
     VRmUsbCamCleanup();

@@ -26,8 +26,8 @@ check_acquisition () {
 		echo "...done."
 	fi
 
-	COUNT_A=`find $IMAGE_DIR$CAM_A'/'${CAM_A}'_'* -type f | wc -l`
-	COUNT_B=`find $IMAGE_DIR$CAM_B'/'${CAM_B}'_'* -type f | wc -l`
+	COUNT_A=`find $IMAGE_DIR'/'$CAM_A'/'${CAM_A}'_'* -type f | wc -l`
+	COUNT_B=`find $IMAGE_DIR'/'$CAM_B'/'${CAM_B}'_'* -type f | wc -l`
 
 	if [ ! -f $IMAGE_DIR$CAM_A'-count.txt' ]; then
 		echo "First image count: $CAM_A: $COUNT_A, $CAM_B: $COUNT_B"
@@ -48,7 +48,7 @@ check_acquisition () {
 		mkdir -p $(dirname RESTARTS_LOG_PATH)
 		echo $(date '+%Y%m%d_%H%M%S') >> $RESTARTS_LOG_PATH
 		sleep 10
-		sudo reboot
+		# sudo reboot
 	else
 		echo "Image count IS increasing. Carry on."
 		echo $COUNT_A > $IMAGE_DIR$CAM_A'-count.txt'
@@ -57,8 +57,9 @@ check_acquisition () {
 }
 
 echo Infinite watchman starting...
-sleep 120
+#sleep 120
 while true; do
 	check_acquisition
-	sleep 90
+	#sleep 90
+	sleep 10
 done
