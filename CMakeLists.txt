@@ -29,7 +29,7 @@ generate_messages(
 # Declare things to be passed to dependent projects
 catkin_package(
    INCLUDE_DIRS include
-   CATKIN_DEPENDS roscpp
+   CATKIN_DEPENDS roscpp message_runtime std_msgs std_srvs
 )
 
 include_directories(
@@ -46,11 +46,13 @@ add_library(
 )
 
 add_executable(
-  vrmagic_stereo_ros src/main.cpp
+  vrmagic_stereo_ros 
+  src/main.cpp
   src/api_handle.cpp
   src/camera_handle.cpp
-  src/serial_port.cpp
 )
+
+add_dependencies(vrmagic_stereo_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(
   vrmagic_stereo_ros

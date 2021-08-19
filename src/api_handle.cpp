@@ -7,7 +7,7 @@
 #include <thread>
 #include <cstring>
 
-#include "vrmagic_driftcam/api_handle.h"
+#include "vrmagic_stereo_ros/api_handle.h"
 
 Driftcam::ApiHandle::ApiHandle(
     const std::string &cam_serial,

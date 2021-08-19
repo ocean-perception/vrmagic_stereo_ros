@@ -5,9 +5,10 @@
 #include <signal.h>
 
 #include <ros/ros.h>
-#include <vrmagic_driftcam/StartAcquisition.h>
+#include <std_srvs/Empty.h>
+#include <vrmagic_stereo_ros/StartAcquisition.h>
 
-#include <vrmagic_driftcam/api_handle.h>
+#include <vrmagic_stereo_ros/api_handle.h>
 
 bool something_changed = false;
 bool enable_acquisition = false;
@@ -52,8 +53,9 @@ static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_d
     }
 }
 
-bool startAcquisitionCb(vrmagic_driftcam::StartAcquisition::Request &request, vrmagic_driftcam::StartAcquisition::Response &response)
+bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, vrmagic_stereo_ros::StartAcquisition::Response &response)
 {
+    response.success = false;
     if (!enable_acquisition)
     {
         ROS_INFO("Starting acquisition");
@@ -61,7 +63,7 @@ bool startAcquisitionCb(vrmagic_driftcam::StartAcquisition::Request &request, vr
         folder_name = request.folder_name;
         response.success = true;
     }
-    return response;
+    return true;
 }
 
 bool stopAcquisitionCb(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response)
@@ -88,8 +90,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nhp("~");
 
     // Provide a start and stop service
-    ros::ServiceServer start_acquisition_srv = nhp.advertiseService<vrmagic_driftcam::StartAcquisition>("start_acquisition", startAcquisitionCb);
-    ros::ServiceServer stop_acquisition_srv = nhp.advertiseService<std_srvs::Empty>("stop_acquisition", stopAcquisitionCb);
+    ros::ServiceServer start_acquisition_srv = nhp.advertiseService("start_acquisition", startAcquisitionCb);
+    ros::ServiceServer stop_acquisition_srv = nhp.advertiseService("stop_acquisition", stopAcquisitionCb);
 
     // Read the save path from the launchfile
     std::string save_path;
@@ -116,7 +118,7 @@ int main(int argc, char **argv)
     }
     nhp.getParam("enable_acquisition", enable_acquisition);
 
-    Driftcam::ApiHandle api(cam_serial, save_path, mission_name, enable_acquisition);
+    Driftcam::ApiHandle api(cam_serial, save_path, enable_acquisition);
     VRmUsbCamRegisterStaticCallback(VRmUsbCamCallbackProxy, 0);
 
     while (ros::ok() && g_request_shutdown == 0)

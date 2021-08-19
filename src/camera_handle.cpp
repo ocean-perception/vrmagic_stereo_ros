@@ -7,7 +7,7 @@
 #include <cstring>
 #include <unistd.h>
 
-#include "vrmagic_driftcam/camera_handle.h"
+#include "vrmagic_stereo_ros/camera_handle.h"
 
 void LogExit()
 {
@@ -183,7 +183,7 @@ namespace Driftcam
     int CameraHandle::grab()
     {
         if (!opened_)
-            return;
+            return -1;
 
         VRmBOOL ready = false;
         while (!ready)
