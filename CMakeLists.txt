@@ -9,17 +9,28 @@ set(VRMAGICUSB2_INCLUDE_DIRS "external/VRmUsbCamSDK/include external/VRmUsbCamSD
 find_package(catkin REQUIRED COMPONENTS
   # ROS Dependencies
   roscpp
+  std_msgs
   std_srvs
+  message_generation
 )
 
-find_package(Boost REQUIRED system)
+find_package(Boost REQUIRED filesystem system)
+
+add_service_files(
+  DIRECTORY srv
+  FILES StartAcquisition.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 
 # Declare things to be passed to dependent projects
 catkin_package(
    INCLUDE_DIRS include
-   CATKIN_DEPENDS roscpp
+   CATKIN_DEPENDS roscpp message_runtime std_msgs std_srvs
 )
-
 
 include_directories(
   include
@@ -29,18 +40,19 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-
 add_library(
-  vrmusbcamcpp 
+  vrmusbcamcpp
   external/VRmUsbCamSDK/wrappers/c++/vrmusbcamcpp.cpp
 )
 
 add_executable(
-  vrmagic_stereo_ros src/main.cpp
+  vrmagic_stereo_ros 
+  src/main.cpp
   src/api_handle.cpp
   src/camera_handle.cpp
-  src/serial_port.cpp
 )
+
+add_dependencies(vrmagic_stereo_ros ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(
   vrmagic_stereo_ros

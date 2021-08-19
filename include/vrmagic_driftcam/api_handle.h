@@ -43,6 +43,17 @@ namespace Driftcam
                 cam_.trigger();
         }
 
+        // Sets the folder to save images to.
+        void setFoldername(const std::string &folder_name)
+        {
+            folder_name_ = folder_name;
+            if (cam_.opened())
+            {
+                cam_.setPath(cam_path_ + "/" + folder_name_ + "/" + cam_serial_);
+            }
+        }
+
+
     private:
         void VRmUsbCamCallbackProxy(
             VRmStaticCallbackType f_type,
@@ -50,6 +61,7 @@ namespace Driftcam
             const void *fcp_callback_params);
         std::string cam_serial_;
         std::string cam_path_;
+        std::string folder_name_;
         Driftcam::CameraHandle cam_;
     };
 }

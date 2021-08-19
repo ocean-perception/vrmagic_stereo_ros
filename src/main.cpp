@@ -6,11 +6,13 @@
 
 #include <ros/ros.h>
 #include <std_srvs/Empty.h>
+#include <vrmagic_stereo_ros/StartAcquisition.h>
 
 #include <vrmagic_driftcam/api_handle.h>
 
 bool something_changed = false;
 bool enable_acquisition = false;
+std::string folder_name = "undefined";
 
 //static sig_atomic_t volatile g_request_shutdown = 0;
 
@@ -51,12 +53,15 @@ static void VRmUsbCamCallbackProxy(VRmStaticCallbackType f_type, void *fp_user_d
     }
 }
 
-bool startAcquisitionCb(std_srvs::Empty::Request &request, std_srvs::Empty::Response &response)
+bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, vrmagic_stereo_ros::StartAcquisition::Response &response)
 {
+    response.success = false;
     if (!enable_acquisition)
     {
         ROS_INFO("Starting acquisition");
         enable_acquisition = true;
+        folder_name = request.folder_name;
+        response.success = true;
     }
     return true;
 }
@@ -141,6 +146,7 @@ int main(int argc, char **argv)
 
             // api.trigger();
             std::cout << "API Grabbing" << std::endl;
+            api.setFoldername(folder_name);
             api.grab();
         }
         /*

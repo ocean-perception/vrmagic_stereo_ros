@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <vrmusbcam2.h>
 
@@ -56,7 +58,16 @@ namespace Driftcam
         void listAllProperties();
         bool opened() { return opened_; }
         void disconnected() { opened_ = false; }
-        void setPath(const std::string &path) { path_ = path; }
+        void setPath(const std::string &path) 
+        { 
+            boost::filesystem::path dir(path);
+            if (!boost::filesystem::is_directory(dir))
+            {
+                boost::filesystem::create_directories(dir);
+            }
+            path_ = path; 
+        }
+
 
     private:
         VRmUsbCamDevice device_;
