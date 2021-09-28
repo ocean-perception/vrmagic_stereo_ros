@@ -7,6 +7,8 @@
 #include <cstring>
 #include <unistd.h>
 
+// #include <opencv2/opencv.hpp>    // re-enable if you need to debug image export using OpenCV
+
 #include "vrmagic_driftcam/camera_handle.h"
 
 void LogExit()
@@ -108,6 +110,11 @@ namespace Driftcam
                            .count() /
                        1000.0;
         VRMEXECANDCHECK(VRmUsbCamRestartTimer());
+        
+        // Show available color formats
+	    printColorFormats();
+        listAllProperties();
+
         // start grabber at first
         VRMEXECANDCHECK(VRmUsbCamStart(device_));
     }
@@ -177,16 +184,27 @@ namespace Driftcam
             {
                 /// Save a VRmImage to a PNG file. Compression level 0 is
                 // uncompressed, max. is 9, use default with -1.
+
+                // Depending on the device format (C or BW) we will need to apply a different conversion 
                 int compression_level = 0;
                 std::stringstream stream;
                 stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_source_img->m_time_stamp / 1000.0;
                 std::string stamp = stream.str();
 
                 std::string filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
-                std::cout << "Saving file: " << filename << std::endl;
+                std::string filename2 = path_ + "/" + identifier_ + "_" + stamp + "_2.png";
+                std::cout << "Saving file (VRmUsb): " << filename << std::endl;
+                std::cout << "Saving file (OpenCV): " << filename2 << std::endl;
+
                 VRMEXECANDCHECK(VRmUsbCamSavePNG(filename.c_str(),
                                                  p_source_img,
                                                  compression_level));
+
+                // OpenCV export method can be used to debug image grab & export
+                // cv::Size img_size(p_source_img->m_image_format.m_width, p_source_img->m_image_format.m_height);
+                // cv::Mat img = cv::Mat(img_size, CV_8UC1, p_source_img->mp_buffer);
+                // cv::Mat img2 = img.clone();     // deep copy
+                // cv::imwrite(filename2, img2);
             }
             VRMEXECANDCHECK(VRmUsbCamUnlockNextImage(device_, &p_source_img));
         }

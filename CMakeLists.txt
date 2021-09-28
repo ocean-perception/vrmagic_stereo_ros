@@ -38,6 +38,7 @@ include_directories(
   external/VRmUsbCamSDK/wrappers/c++
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  /opt/ros/kinetic/include/opencv-3.3.1-dev
 )
 
 add_library(
@@ -60,6 +61,9 @@ target_link_libraries(
   ${VRMAGICUSB2_LIBRARIES}
   ${Boost_LIBRARIES}
   ${catkin_LIBRARIES}
+  /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgproc3.so
+  /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_core3.so
+  /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgcodecs3.so
 )
 
 install(
