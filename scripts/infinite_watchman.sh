@@ -2,8 +2,8 @@
 
 check_acquisition () {
 	## Parameters ##
-	WATCHMAN_FILE_PATH=/media/driftcam/sdcard/watchman/path.txt
-	RESTARTS_LOG_PATH=/media/driftcam/sdcard/log/watchman_restarts.txt
+	WATCHMAN_FILE_PATH=/media/driftcam/MICROSD/watchman/path.txt
+	RESTARTS_LOG_PATH=/media/driftcam/MICROSD/log/watchman_restarts.txt
 
 	if test -f "$WATCHMAN_FILE_PATH"; then
 		echo "$WATCHMAN_FILE_PATH exists -> we are recording data"

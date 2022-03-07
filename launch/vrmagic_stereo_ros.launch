@@ -3,13 +3,13 @@
     <arg name="enable_acquisition" default="false"/>
 
     <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="camera_QERQR5" output="screen" respawn="true">
-        <param name="save_path" value="/media/driftcam/sdcard/data"/>
+        <param name="save_path" value="/media/driftcam/MICROSD/data"/>
         <param name="serial" value="QERQR5"/>
         <param name="enable_acquisition" value="$(arg enable_acquisition)"/>
     </node>
 
     <node pkg="vrmagic_stereo_ros" type="vrmagic_stereo_ros" name="camera_FEQH45" output="screen" respawn="true">
-        <param name="save_path" value="/media/driftcam/sdcard/data"/>
+        <param name="save_path" value="/media/driftcam/MICROSD/data"/>
         <param name="serial" value="FEQH45"/>
         <param name="enable_acquisition" value="$(arg enable_acquisition)"/>
     </node>

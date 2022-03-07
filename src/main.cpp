@@ -17,8 +17,8 @@
 bool something_changed = false;
 bool enable_acquisition = false;
 std::string folder_name = "undefined";
-std::string watchman_folder = "/media/driftcam/sdcard/watchman";
-std::string data_folder = "/media/driftcam/sdcard/data/";
+std::string watchman_folder = "/media/driftcam/MICROSD/watchman";
+std::string data_folder = "/media/driftcam/MICROSD/data/";
 
 void removeWatchmanFile() 
 {

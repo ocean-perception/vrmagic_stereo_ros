@@ -42,7 +42,7 @@ namespace Driftcam
         opened_ = false;
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        //std::string logfile_str = "/media/driftcam/sdcard/log/vrcamera_" + camera_serial + ".log";
+        //std::string logfile_str = "/media/driftcam/MICROSD/log/vrcamera_" + camera_serial + ".log";
         //VRmSTRING logfile = logfile_str.c_str();
         //std::cout << "Logfile is: " << logfile << std::endl;
         //VRmUsbCamEnableLoggingEx(logfile);
