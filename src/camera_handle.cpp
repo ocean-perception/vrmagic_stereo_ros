@@ -42,10 +42,10 @@ namespace Driftcam
         opened_ = false;
 
         // uncomment this to enable logging features of VRmUsbCam (customer support)
-        //std::string logfile_str = "/media/driftcam/MICROSD/log/vrcamera_" + camera_serial + ".log";
-        //VRmSTRING logfile = logfile_str.c_str();
-        //std::cout << "Logfile is: " << logfile << std::endl;
-        //VRmUsbCamEnableLoggingEx(logfile);
+        // std::string logfile_str = "/media/driftcam/MICROSD/log/vrcamera_" + camera_serial + ".log";
+        // VRmSTRING logfile = logfile_str.c_str();
+        // std::cout << "Logfile is: " << logfile << std::endl;
+        // VRmUsbCamEnableLoggingEx(logfile);
 
         // check for connected devices
         VRmDWORD size = 0;
@@ -110,10 +110,10 @@ namespace Driftcam
                            .count() /
                        1000.0;
         VRMEXECANDCHECK(VRmUsbCamRestartTimer());
-        
+
         // Show available color formats
-	    printColorFormats();
-        listAllProperties();
+        // printColorFormats();
+        // listAllProperties();
 
         // start grabber at first
         VRMEXECANDCHECK(VRmUsbCamStart(device_));
@@ -129,13 +129,13 @@ namespace Driftcam
     void CameraHandle::stop()
     {
         // ...and the device
-        //std::cout << "Stopping camera..." << std::endl;
+        // std::cout << "Stopping camera..." << std::endl;
         VRMEXECANDCHECK(VRmUsbCamStop(device_));
     }
 
     void CameraHandle::close()
     {
-        //std::cout << "Closing camera..." << std::endl;
+        // std::cout << "Closing camera..." << std::endl;
         VRMEXECANDCHECK(VRmUsbCamCloseDevice(device_));
         opened_ = false;
     }
@@ -164,7 +164,7 @@ namespace Driftcam
         // format and unlock it again, so that grabbing can go on
         VRmImage *p_source_img = 0;
         VRmDWORD frames_dropped = 0;
-        //std::cout << "Locking grabber until image" << std::endl;
+        // std::cout << "Locking grabber until image" << std::endl;
         images_available = VRmUsbCamLockNextImageEx2(device_,
                                                      port_,
                                                      &p_source_img,
@@ -185,16 +185,16 @@ namespace Driftcam
                 /// Save a VRmImage to a PNG file. Compression level 0 is
                 // uncompressed, max. is 9, use default with -1.
 
-                // Depending on the device format (C or BW) we will need to apply a different conversion 
+                // Depending on the device format (C or BW) we will need to apply a different conversion
                 int compression_level = 0;
                 std::stringstream stream;
                 stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_source_img->m_time_stamp / 1000.0;
                 std::string stamp = stream.str();
 
                 std::string filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
-                std::string filename2 = path_ + "/" + identifier_ + "_" + stamp + "_2.png";
                 std::cout << "Saving file (VRmUsb): " << filename << std::endl;
-                std::cout << "Saving file (OpenCV): " << filename2 << std::endl;
+                // std::string filename2 = path_ + "/" + identifier_ + "_" + stamp + "_2.png";
+                // std::cout << "Saving file (OpenCV): " << filename2 << std::endl;
 
                 VRMEXECANDCHECK(VRmUsbCamSavePNG(filename.c_str(),
                                                  p_source_img,
@@ -217,7 +217,7 @@ namespace Driftcam
                       << error_string << std::endl;
             opened_ = false;
         }
-	stop();
+        stop();
         close();
     }
 
