@@ -145,10 +145,11 @@ namespace Driftcam
         VRMEXECANDCHECK(VRmUsbCamSoftTrigger(device_));
     }
 
-    void CameraHandle::grab()
+    std::string CameraHandle::grab()
     {
+        std::string filename;
         if (!opened_)
-            return;
+            return filename;
 
         VRmBOOL ready = false;
         while (!ready)
@@ -191,7 +192,7 @@ namespace Driftcam
                 stream << std::fixed << std::setprecision(6) << clock_epoch_ + p_source_img->m_time_stamp / 1000.0;
                 std::string stamp = stream.str();
 
-                std::string filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
+                filename = path_ + "/" + identifier_ + "_" + stamp + ".png";
                 std::cout << "Saving file (VRmUsb): " << filename << std::endl;
                 // std::string filename2 = path_ + "/" + identifier_ + "_" + stamp + "_2.png";
                 // std::cout << "Saving file (OpenCV): " << filename2 << std::endl;
@@ -219,6 +220,7 @@ namespace Driftcam
         }
         stop();
         close();
+        return filename;
     }
 
     bool CameraHandle::setPropertyPort()

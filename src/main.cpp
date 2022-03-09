@@ -20,36 +20,34 @@ std::string folder_name = "undefined";
 std::string watchman_folder = "/media/driftcam/MICROSD/watchman";
 std::string data_folder = "/media/driftcam/MICROSD/data/";
 
-void removeWatchmanFile() 
+void removeWatchmanFile()
 {
     boost::filesystem::path wf(watchman_folder + "/path.txt");
     if (boost::filesystem::is_regular_file(wf))
         boost::filesystem::remove(wf);
 }
 
-bool watchmanFileExists() 
+bool watchmanFileExists()
 {
     boost::filesystem::path wf(watchman_folder + "/path.txt");
     return boost::filesystem::is_regular_file(wf);
 }
 
-
 void mySigintHandler(int sig)
 {
     ROS_INFO("Cleaning up...");
     removeWatchmanFile();
-    //api.close();
+    // api.close();
     VRmUsbCamCleanup();
     ros::shutdown();
 }
 
-void createWatchmanFile(const std::string& folder_name) 
+void createWatchmanFile(const std::string &folder_name)
 {
     std::ofstream myfile;
     myfile.open(watchman_folder + "/path.txt");
     myfile << data_folder << folder_name << "\nFEQH45\nQERQR5";
     myfile.close();
-
 }
 
 bool startAcquisitionCb(vrmagic_stereo_ros::StartAcquisition::Request &request, vrmagic_stereo_ros::StartAcquisition::Response &response)
@@ -84,9 +82,9 @@ int main(int argc, char **argv)
     // at first, be sure to call VRmUsbCamCleanup() at exit, even in case
     // of an error
     atexit(VRmUsbCamCleanup);
- 
+
     signal(SIGINT, mySigintHandler);
-   
+
     // Init ROS node
     ros::init(argc, argv, "vrmagic_stereo_ros", ros::init_options::NoSigintHandler);
     ros::NodeHandle nh;
@@ -95,6 +93,8 @@ int main(int argc, char **argv)
     // Provide a start and stop service
     ros::ServiceServer start_acquisition_srv = nhp.advertiseService("start_acquisition", startAcquisitionCb);
     ros::ServiceServer stop_acquisition_srv = nhp.advertiseService("stop_acquisition", stopAcquisitionCb);
+
+    ros::Publisher image_saved_pub = nhp.advertise<std_msgs::String>("image_saved", 1);
 
     // Read the save path from the launchfile
     std::string save_path;
@@ -121,7 +121,8 @@ int main(int argc, char **argv)
     }
     nhp.getParam("enable_acquisition", enable_acquisition);
 
-    if (watchmanFileExists()) {
+    if (watchmanFileExists())
+    {
         enable_acquisition = true;
         nh.getParam("/driftcam/save_image_dir", folder_name);
     }
@@ -140,7 +141,8 @@ int main(int argc, char **argv)
             }
 
             api.setFoldername(folder_name);
-            api.grab();
+            std::string filename = api.grab();
+            image_saved_pub.publish(filename);
         }
         ros::spinOnce();
     }
