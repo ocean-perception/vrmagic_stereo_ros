@@ -9,6 +9,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include <ros/ros.h>
+#include <std_msgs/String.h>
 #include <std_srvs/Empty.h>
 #include <vrmagic_stereo_ros/StartAcquisition.h>
 
